@@ -2,10 +2,6 @@
 xshop open api java sdk client
 
 ## 如何使用
-### 环境
-命令:
-1、通过 scheme 文件生成 java代码
-mvn generate-sources
 
 ### 添加依赖
 - maven
