@@ -15,7 +15,7 @@ xshop open api java sdk client
 - gradle
 ```bash
 //这里使用的是2.12
-compile group: 'com.shop0', name: 'shop0-openapi', version: '1.0.0'
+compile group: 'com.shop0', name: 'shop0-openapi-java', version: '1.0.0'
 ```
 
 
