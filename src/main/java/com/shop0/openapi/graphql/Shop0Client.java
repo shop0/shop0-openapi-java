@@ -1,4 +1,4 @@
-package com.xshop0.openapi.graphql;
+package com.shop0.openapi.graphql;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;

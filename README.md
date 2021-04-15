@@ -1,4 +1,4 @@
-## xshop-openapi-java
+## shop0-openapi-java
 xshop open api java sdk client
 
 ## 如何使用
