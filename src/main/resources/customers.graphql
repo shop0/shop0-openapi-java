@@ -1,0 +1,89 @@
+extend type Query {
+  customer(id: ID!): Customer
+}
+
+type CustomerCreditCard {
+  name: String!
+}
+
+union CustomerPaymentInstrument = CustomerCreditCard
+
+type CustomerPaymentMethod {
+  customer: Customer
+  id: ID!
+  instrument: CustomerPaymentInstrument
+  revokedAt: DateTime
+}
+
+type CustomerPaymentMethodEdge {
+  cursor: String!
+  node: CustomerPaymentMethod!
+}
+
+type CustomerPaymentMethodConnection {
+  edges: [CustomerPaymentMethodEdge!]!
+  pageInfo: PageInfo!
+}
+
+type Customer implements Node & HasMetafields & HasEvents {
+  id: ID!
+  events(
+    after: String
+    before: String
+    first: Int
+    last: Int
+    query: String
+    reverse: Boolean
+    sortKey: EventSortKeys
+  ): EventConnection!
+
+  metafields(
+    after: String
+    before: String
+    first: Int
+    last: Int
+    namespace: String
+    reverse: Boolean
+  ): MetafieldConnection!
+
+  metafield(key: String!, namespace: String!): Metafield
+
+  privateMetafields(
+    after: String
+    before: String
+    first: Int
+    last: Int
+    namespace: String
+    reverse: Boolean
+  ): MetafieldConnection!
+
+  privateMetafield(key: String!, namespace: String!): Metafield
+
+  orders(
+    after: String
+    before: String
+    first: Int
+    last: Int
+    query: String
+    reverse: Boolean
+    sortKey: OrderSortKeys
+  ): OrderConnection!
+
+  paymentMethods(
+    after: String
+    before: String
+    first: Int
+    last: Int
+    reverse: Boolean
+    showRevoked: Boolean
+  ): CustomerPaymentMethodConnection!
+
+  tags: [Tag!]!
+
+  lastOrder: Order
+
+  note: String
+  ordersCount: UInt64!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}

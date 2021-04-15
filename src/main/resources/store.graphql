@@ -1,0 +1,19 @@
+extend type Query {
+  shop: Shop!
+}
+
+type ShopAlert {
+  action: ShopAlertAction!
+  description: String!
+}
+
+type Shop implements Node {
+  id: ID!
+  alerts: [ShopAlert!]!
+  currencyCode: CurrencyCode!
+}
+
+type ShopAlertAction {
+  title: String!
+  url: URL!
+}

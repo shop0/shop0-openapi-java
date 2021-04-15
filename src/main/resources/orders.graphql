@@ -1,0 +1,449 @@
+extend type Query {
+  order(id: ID!): Order
+  orders(
+    after: String
+    before: String
+    first: Int
+    last: Int
+    reverse: Boolean
+  ): OrderConnection!
+}
+
+extend type Mutation {
+  orderClose(input: OrderCloseInput!): OrderClose!
+  refundCreate(input: RefundInput!): RefundCreate!
+}
+
+input RefundInput {
+  currency: CurrencyCode
+  note: String
+  notify: Boolean
+  orderId: ID!
+  refundLineItems: [RefundLineItemInput!]
+  shipping: ShippingRefundInput
+  transactions: [OrderTransactionInput!]
+}
+
+input OrderTransactionInput {
+  amount: Float!
+  gateway: String!
+  kind: OrderTransactionKind!
+  orderId: ID!
+  parentId: ID
+}
+
+input RefundDutyInput {
+  dutyId: ID!
+  refundType: RefundDutyRefundType
+}
+
+input RefundLineItemInput {
+  lineItemId: ID!
+  locationId: ID
+  quantity: Int!
+  restockType: RefundLineItemRestockType
+}
+
+enum RefundDutyRefundType {
+  FULL
+  PROPORTIONAL
+}
+
+enum OrderTransactionKind {
+  VOID
+  CAPTURE
+  CHANGE
+  EMV_AUTHORIZATION
+  REFUND
+  SALE
+  SUGGESTED_REFUND
+  AUTHORIZATION
+}
+
+input ShippingRefundInput {
+  amount: Float
+  fullRefund: Boolean
+}
+
+type RefundCreate {
+  order: Order
+  refund: Refund
+  userErrors: [UserError!]!
+}
+
+type OrderEdge {
+  cursor: String!
+  node: Order!
+}
+
+type OrderConnection {
+  totalCount: Int
+  edges: [OrderEdge!]!
+  pageInfo: PageInfo!
+}
+
+enum OrderSortKeys {
+  UPDATED_AT
+  CUSTOMER_NAME
+  FINANCIAL_STATUS
+  FULFILLMENT_STATUS
+  ID
+  ORDER_NUMBER
+  PROCESSED_AT
+  RELEVANCE
+  TOTAL_PRICE
+  CREATED_AT
+}
+
+type Refund implements Node {
+  id: ID!
+  refundLineItems(
+    after: String
+    before: String
+    first: Int
+    last: Int
+    reverse: Boolean = false
+  ): RefundLineItemConnection! # The RefundLineItem resources attached to the refund.
+  transactions(
+    after: String
+    before: String
+    first: Int
+    last: Int
+    reverse: Boolean
+  ): OrderTransactionConnection!
+}
+
+type OrderTransactionConnection {
+  edges: [OrderTransactionEdge!]!
+  pageInfo: PageInfo!
+}
+
+type OrderTransactionEdge {
+  cursor: String!
+  node: OrderTransaction!
+}
+
+type RefundLineItemConnection {
+  edges: [RefundLineItemEdge!]!
+  pageInfo: PageInfo!
+}
+
+type RefundLineItemEdge {
+  cursor: String!
+  node: RefundLineItem!
+}
+
+type RefundLineItem {
+  lineItem: LineItem! # Returns a LineItem resource. This represents the LineItem in the non-refund context.
+  location: Location # The inventory restock location.
+  priceSet: MoneyBag! # Returns the price of a refunded line item in shop and presentment currencies.
+  quantity: Int! # Returns the quantity of a refunded line item.
+  restockType: RefundLineItemRestockType! # Represents the type of restock for the refunded line item.
+  restocked: Boolean! # Whether the refunded line item was restocked. Not applicable in the context of a SuggestedRefund.
+  subtotalSet: MoneyBag! # Returns the subtotal price of a refunded line item in shop and presentment currencies.
+  totalTaxSet: MoneyBag! # Returns the total tax charged on a refunded line item in shop and presentment currencies.
+}
+
+# The type of restock performed for a particular refund line item.
+enum RefundLineItemRestockType {
+  CANCEL # Refund line item was canceled.
+  LEGACY_RESTOCK # Refund line item was restocked, without specifically being identified as a return or cancelation.
+  NO_RESTOCK # Refund line item was not restocked.
+  RETURN # 退款商品已退回
+}
+
+input OrderCloseInput {
+  id: ID!
+}
+
+type OrderClose {
+  order: Order
+  userErrors: [UserError!]!
+}
+
+type LineItem implements Node {
+  fulfillableQuantity: Int!
+  fulfillmentService: FulfillmentService!
+  fulfillmentStatus: String!
+  id: ID!
+  image(crop: CropRegion, maxHeight: Int, maxWidth: Int, scale: Int): Image
+  merchantEditable: Boolean!
+  name: String!
+  nonFulfillableQuantity: Int!
+  product: Product
+  quantity: Int!
+  refundableQuantity: Int!
+  requiresShipping: Boolean!
+  restockable: Boolean!
+  sku: String
+  taxable: Boolean!
+  title: String!
+  unfulfilledQuantity: Int!
+  variant: ProductVariant
+  variantTitle: String
+  vendor: String
+}
+
+type LineItemEdge {
+  cursor: String!
+  node: LineItem!
+}
+
+type LineItemConnection {
+  edges: [LineItemEdge!]!
+  pageInfo: PageInfo!
+}
+
+enum DiscountApplicationAllocationMethod {
+  ACROSS # The value is spread across all entitled lines.
+  EACH # The value is applied onto every entitled line.
+}
+
+enum DiscountApplicationTargetSelection {
+  ALL # The discount is allocated onto all the lines.
+  ENTITLED # The discount is allocated onto only the lines it is entitled for.
+  EXPLICIT # The discount is allocated onto explicitly chosen lines.
+}
+
+enum DiscountApplicationTargetType {
+  LINE_ITEM # The discount applies onto line items.
+  SHIPPING_LINE # The discount applies onto shipping lines.
+}
+
+type DiscountApplication {
+  allocationMethod: DiscountApplicationAllocationMethod!
+  index: Int!
+  targetSelection: DiscountApplicationTargetSelection!
+  targetType: DiscountApplicationTargetType!
+  value: PricingValue!
+}
+
+type DiscountApplicationEdge {
+  cursor: String!
+  node: DiscountApplication!
+}
+
+type DiscountApplicationConnection {
+  edges: [DiscountApplicationEdge!]!
+  pageInfo: PageInfo!
+}
+
+type Order implements Node & HasEvents & HasMetafields {
+  id: ID!
+  discountApplications(
+    after: String # 返回在指定游标之后的元素.
+    before: String # 返回在游标之前的元素.
+    first: Int # 返回列表中前 n 个元素
+    last: Int # 返回列表中最后 n 个元素.
+    reverse: Boolean = false # 列表逆序, 默认值: false
+  ): DiscountApplicationConnection!
+
+  events(
+    after: String
+    before: String
+    first: Int
+    last: Int
+    query: String
+    reverse: Boolean
+    sortKey: EventSortKeys
+  ): EventConnection!
+
+  shippingAddress: MailingAddress
+  shippingLine: ShippingLine
+
+  subtotalLineItemsQuantity: Int!
+
+  tags: [Tag!]!
+
+  refunds(first: Int): [Refund!]!
+
+  totalWeight: UInt64
+
+  refundable: Boolean!
+
+  processedAt: DateTime!
+
+  metafields(
+    after: String
+    before: String
+    first: Int
+    last: Int
+    namespace: String
+    reverse: Boolean
+  ): MetafieldConnection!
+
+  metafield(key: String!, namespace: String!): Metafield
+
+  privateMetafields(
+    after: String
+    before: String
+    first: Int
+    last: Int
+    namespace: String
+    reverse: Boolean
+  ): MetafieldConnection!
+
+  privateMetafield(key: String!, namespace: String!): Metafield
+
+  fullyPaid: Boolean!
+
+  lineItems(
+    after: String
+    before: String
+    first: Int
+    last: Int
+    reverse: Boolean
+  ): LineItemConnection!
+
+  fulfillments(first: Int): [Fulfillment!]!
+
+  risks(first: Int): [OrderRisk!]!
+
+  totalCapturableSet: MoneyBag! # Amount authorized for the order, that is uncaptured or undercaptured in shop and presentment currencies.
+  totalDiscountsSet: MoneyBag # 订单总共折扣金额 (包含订单级别和 item级别折扣)
+  totalOutstandingSet: MoneyBag! # 尚未授权订单的总金额
+  totalPriceSet: MoneyBag! # 订单总额（包括税金和折扣）以商店货币和现钞货币表示
+  totalReceivedSet: MoneyBag! # Total amount received by the customer for the order in shop and presentment currencies.
+  totalRefundedSet: MoneyBag! # Total amount refunded for the order in shop and presentment currencies.
+  totalRefundedShippingSet: MoneyBag! # Total amount refunded for shipping in shop and presentment currencies.
+  totalShippingPriceSet: MoneyBag! # Total amount charged for shipping the order in shop and presentment currencies.
+  totalTaxSet: MoneyBag # Total of all taxes applied to the order in shop and presentment currencies.
+  totalTipReceivedSet: MoneyBag! # Total tip received for the order in shop and presentment currencies.
+  subtotalPriceSet: MoneyBag # Subtotal of the line items and their discounts (does not contain shipping costs and shipping discounts) in shop and presentment currencies.
+  transactions(
+    capturable: Boolean #Filter transactions by whether they are capturable. If true, then returns only transactions that represent an authorized payment that can be captured. If false, then returns all transactions.
+    first: Int
+    manuallyResolvable: Boolean # Filter transactions by whether they are manual payments. If true, then returns only transactions that are manual payments. If false, then returns all transactions.
+  ): [OrderTransaction!]!
+
+  unpaid: Boolean! # Whether no payments have been made for the order. If no payments have been made for the order, then this returns true.
+  updatedAt: DateTime!
+  taxesIncluded: Boolean! # Whether taxes are included in the subtotal price of the order.
+  taxLines: [TaxLine!]! # Taxes charged for the line item.
+}
+
+type OrderRisk {
+  display: Boolean! # Whether the risk level is shown in the Shopify admin. If false, then this order risk is ignored when Shopify determines the overall risk level for the order.
+  level: OrderRiskLevel # The likelihood that an order is fraudulent, based on this order risk. The level can be set by Shopify risk analysis or by an app.
+  message: String # The risk message that's shown to the merchant in the Shopify admin.
+}
+
+enum OrderRiskLevel {
+  HIGH # There is a high level of risk that this order is fraudulent.
+  LOW # There is a low level of risk that this order is fraudulent.
+  MEDIUM # There is a medium level of risk that this order is fraudulent.
+}
+
+type ShippingLine {
+  carrierIdentifier: String # A reference to the carrier service that provided the rate. Present when the rate was computed by a third-party carrier service.
+  code: String # A reference to the shipping method.
+  custom: Boolean! # Whether the shipping line is custom or not.
+  deliveryCategory: String # The general classification of the delivery method.
+  discountAllocations: [DiscountAllocation!]! # The discounts that have been allocated to the shipping line.
+  discountedPriceSet: MoneyBag! # The pre-tax shipping price with discounts applied.
+  id: ID # Globally unique identifier.
+  originalPriceSet: MoneyBag! # The pre-tax shipping price without any discounts applied.
+  phone: String # The phone number at the shipping address.
+  requestedFulfillmentService: FulfillmentService # The fulfillment service requested for the shipping method. Present if the shipping method requires processing by a third party fulfillment service.
+  shippingRateHandle: String # A unique identifier for the shipping rate. The format can change without notice and is not meant to be shown to users.
+  source: String # Returns the rate source for the shipping line.
+  taxLines: [TaxLine!]! # The TaxLine objects connected to this shipping line.
+  title: String! # Returns the title of the shipping line.
+}
+
+# Represents the information about the tax charged on the associated line item.
+type TaxLine {
+  priceSet: MoneyBag! # The amount of tax to be charged in shop and presentment currencies.
+  rate: Float # The tax rate to be applied.
+  ratePercentage: Float # The percentage of the price that the tax rate represents.
+  title: String! # The name of the tax.
+}
+
+# An amount discounting the line that has been allocated by an associated discount application.
+type DiscountAllocation {
+  allocatedAmountSet: MoneyBag! # Money amount allocated by the discount application in shop and presentment currencies.
+  discountApplication: DiscountApplication! # The discount of which this allocated amount originated from.
+}
+
+type OrderTransaction implements Node {
+  accountNumber: String # The masked account number associated with the payment method.
+  amountSet: MoneyBag! # The amount and currency of the transaction in shop and presentment currencies.
+  authorizationCode: String # Authorization code associated with the transaction.
+  authorizationExpiresAt: DateTime # The time when the authorization expires. This field is available only to stores on a Shopify Plus plan and is populated only for Shopify Payments authorizations.
+  createdAt: DateTime! # Date and time when the transaction was created.
+  errorCode: OrderTransactionErrorCode # A standardized error code, independent of the payment provider.
+  fees: [TransactionFee!]! # The transaction fees charged on the order transaction.
+  formattedGateway: String # The human-readable payment gateway name used to process the transaction.
+  gateway: String # The payment gateway used to process the transaction.
+  id: ID! # Globally unique identifier.
+  kind: OrderTransactionKind! # The kind of transaction.
+  manuallyCapturable: Boolean! # Whether the transaction can be manually captured.
+  maximumRefundableV2: Money # Specifies the available amount with currency to refund on the gateway. Only available within SuggestedRefund.
+  order: Order # 关联的订单
+  parentTransaction: OrderTransaction # The associated parent transaction, for example the authorization of a capture.
+  paymentIcon(
+    crop: CropRegion # Crops the image according to the specified region. This argument is deprecated: Use crop on Image.transformedSrc instead.
+    maxHeight: Int # Image height in pixels between 1 and 2048. This argument is deprecated: Use maxHeight on Image.transformedSrc instead.
+    maxWidth: Int # Image width in pixels between 1 and 2048. This argument is deprecated: Use maxWidth on Image.transformedSrc instead.
+    scale: Int = 1 # Image size multiplier for high-resolution retina displays. Must be between 1 and 3. This argument is deprecated: Use scale on Image.transformedSrc instead.
+  ): Image # Specifies the payment icon to display for this transaction.
+  processedAt: DateTime # Date and time when the transaction was processed.
+  settlementCurrency: CurrencyCode # The settlement currency
+  settlementCurrencyRate: Float # The rate used when converting the transaction amount to settlement currency.
+  # shopifyPaymentsSet: ShopifyPaymentsTransactionSet # Contains all Shopify Payments information related to an order transaction. This field is available only to stores on a Shopify Plus plan.
+  status: OrderTransactionStatus! # The status of this transaction.
+  test: Boolean! # Whether the transaction is a test transaction.
+  totalUnsettledSet: MoneyBag # Specifies the available amount with currency to capture on the gateway in shop and presentment currencies. Only available when an amount is capturable or manually mark as paid.
+}
+
+# A standardized error code, independent of the payment provider
+enum OrderTransactionErrorCode {
+  UNSUPPORTED_FEATURE # The gateway or merchant configuration doesn't support a feature, such as network tokenization.
+  AMAZON_PAYMENTS_MAX_AMOUNT_CHARGED # The maximum amount has been captured.
+  AMAZON_PAYMENTS_MAX_AMOUNT_REFUNDED # The maximum amount has been refunded.
+  AMAZON_PAYMENTS_MAX_AUTHORIZATIONS_CAPTURED # The maximum of 10 authorizations has been captured for an order.
+  AMAZON_PAYMENTS_MAX_REFUNDS_PROCESSED # The maximum of 10 refunds has been processed for an order.
+  AMAZON_PAYMENTS_ORDER_REFERENCE_CANCELED # The order was canceled, which canceled all open authorizations.
+  AMAZON_PAYMENTS_STALE # The order was not confirmed within three hours.
+  AMAZON_PAYMENTS_INVALID_PAYMENT_METHOD # The payment method was invalid.
+  CALL_ISSUER # Call the card issuer.
+  CARD_DECLINED # The card was declined.
+  CONFIG_ERROR # There is an error in the gateway or merchant configuration.
+  EXPIRED_CARD # The card is expired.
+  GENERIC_ERROR # There was an unknown error with processing the payment.
+  INCORRECT_ADDRESS # The address does not match the card number.
+  INCORRECT_CVC # The CVC does not match the card number.
+  INCORRECT_NUMBER # The card number is incorrect.
+  INCORRECT_PIN # The entered PIN is incorrect.
+  INCORRECT_ZIP # The ZIP or postal code does not match the card number.
+  INVALID_AMOUNT # The amount is either too high or too low for the provider.
+  INVALID_COUNTRY # The payment method is not available in the customer's country.
+  INVALID_CVC # The format of the CVC is incorrect.
+  INVALID_EXPIRY_DATE # The format of the expiry date is incorrect.
+  INVALID_NUMBER # The format of the card number is incorrect.
+  PAYMENT_METHOD_UNAVAILABLE # The payment method is momentarily unavailable.
+  PICK_UP_CARD # The card has been reported as lost or stolen, and the card issuer has requested that the merchant keep the card and call the number on the back.
+  PROCESSING_ERROR # There was an error while processing the payment.
+  TEST_MODE_LIVE_CARD # A real card was used but the gateway was in test mode.
+}
+
+type TransactionFee implements Node {
+  amount: Money! # Amount of the fee.
+  flatFee: Money! # Flat rate charge for a transaction.
+  flatFeeName: String # Name of the credit card flat fee.
+  id: ID! # Globally unique identifier.
+  rate: Float! # Percentage charge.
+  rateName: String # Name of the credit card rate.
+  taxAmount: Money! # Tax amount charged on the fee.
+  type: String! # Name of the type of fee.
+}
+
+# Transaction status' describe the status of a transaction.
+enum OrderTransactionStatus {
+  AWAITING_RESPONSE # Awaiting a response.
+  ERROR # There was an error while processing the transaction.
+  FAILURE # The transaction failed.
+  PENDING # The transaction is pending.
+  SUCCESS # The transaction succeeded.
+  UNKNOWN # The transaction status is unknown.
+}

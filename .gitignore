@@ -1,0 +1,16 @@
+*.class
+*.log
+
+logs/
+.cache/
+.history/
+.lib/
+dist/*
+target/
+
+.idea
+
+.DS_Store
+*.graphqls
+/examples/.gradle/
+/examples/build/

@@ -1,0 +1,98 @@
+extend type Mutation {
+  checkoutCreate(input: CheckoutCreateInput!): CheckoutCreate!
+}
+
+type CheckoutLineItem {
+  id: ID!
+  quantity: Int!
+  title: String!
+  unitPrice: Money
+  variant: ProductVariant
+}
+
+type CheckoutLineItemEdge {
+  cursor: String!
+  node: CheckoutLineItem!
+}
+
+type CheckoutLineItemConnection {
+  edges: [CheckoutLineItemEdge!]!
+  pageInfo: PageInfo!
+}
+
+type Checkout {
+  id: ID!
+  order: Order
+  note: String
+  lineItems(
+    after: String
+    before: String
+    first: Int
+    last: Int
+    reverse: Boolean
+  ): CheckoutLineItemConnection!
+}
+
+input CheckoutLineItemInput {
+  quantity: Int!
+  variantId: ID!
+}
+
+input CheckoutCreateInput {
+  lineItems: [CheckoutLineItemInput!]
+  note: String
+  presentmentCurrencyCode: CurrencyCode
+  shippingAddressId: ID
+}
+
+type CheckoutCreate {
+  checkout: Checkout
+  checkoutUserErrors: [CheckoutUserError!]!
+}
+
+enum CheckoutErrorCode {
+  UNABLE_TO_APPLY
+  BAD_DOMAIN
+  BLANK
+  CART_DOES_NOT_MEET_DISCOUNT_REQUIREMENTS_NOTICE
+  CUSTOMER_ALREADY_USED_ONCE_PER_CUSTOMER_DISCOUNT_NOTICE
+  DISCOUNT_ALREADY_APPLIED
+  DISCOUNT_DISABLED
+  DISCOUNT_EXPIRED
+  DISCOUNT_LIMIT_REACHED
+  DISCOUNT_NOT_FOUND
+  EMPTY
+  GIFT_CARD_ALREADY_APPLIED
+  GIFT_CARD_CODE_INVALID
+  GIFT_CARD_CURRENCY_MISMATCH
+  GIFT_CARD_DEPLETED
+  GIFT_CARD_DISABLED
+  GIFT_CARD_EXPIRED
+  GIFT_CARD_NOT_FOUND
+  GIFT_CARD_UNUSABLE
+  GREATER_THAN_OR_EQUAL_TO
+  INVALID
+  INVALID_FOR_COUNTRY
+  INVALID_FOR_COUNTRY_AND_PROVINCE
+  INVALID_PROVINCE_IN_COUNTRY
+  INVALID_REGION_IN_COUNTRY
+  INVALID_STATE_IN_COUNTRY
+  LESS_THAN
+  LESS_THAN_OR_EQUAL_TO
+  LINE_ITEM_NOT_FOUND
+  LOCKED
+  MISSING_PAYMENT_INPUT
+  NOT_ENOUGH_IN_STOCK
+  NOT_SUPPORTED
+  PRESENT
+  SHIPPING_RATE_EXPIRED
+  TOO_LONG
+  TOTAL_PRICE_MISMATCH
+  ALREADY_COMPLETED
+}
+
+type CheckoutUserError implements DisplayableError {
+  code: CheckoutErrorCode
+  field: [String!]
+  message: String!
+}

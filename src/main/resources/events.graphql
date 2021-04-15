@@ -1,0 +1,37 @@
+enum EventSortKeys {
+  CREATED_AT
+  ID
+  RELEVANCE
+}
+
+type Event {
+  id: ID!
+  appTitle: String
+  attributeToApp: Boolean!
+  attributeToUser: Boolean!
+  createdAt: DateTime!
+  criticalAlert: Boolean!
+  message: FormattedString!
+}
+
+type EventEdge {
+  cursor: String!
+  node: Event!
+}
+
+type EventConnection {
+  edges: [EventEdge!]!
+  pageInfo: PageInfo!
+}
+
+interface HasEvents {
+  events(
+    after: String
+    before: String
+    first: Int
+    last: Int
+    query: String
+    reverse: Boolean
+    sortKey: EventSortKeys
+  ): EventConnection!
+}

@@ -1,0 +1,5 @@
+union PricingValue = Money | PricingPercentageValue
+
+type PricingPercentageValue {
+  percentage: Float!
+}

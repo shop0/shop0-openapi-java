@@ -1,0 +1,75 @@
+enum FulfillmentDisplayStatus {
+  SUBMITTED
+  CANCELED
+  CONFIRMED
+  DELIVERED
+  FAILURE
+  FULFILLED
+  IN_TRANSIT
+  LABEL_PRINTED
+  LABEL_PURCHASED
+  LABEL_VOIDED
+  MARKED_AS_FULFILLED
+  NOT_DELIVERED
+  OUT_FOR_DELIVERY
+  PICKED_UP
+  READY_FOR_PICKUP
+  ATTEMPTED_DELIVERY
+}
+
+enum FulfillmentStatus {
+  CANCELLED
+  ERROR
+  FAILURE
+  OPEN
+  PENDING
+  SUCCESS
+}
+
+type FulfillmentTrackingInfo {
+  company: String
+  number: String
+  url: URL
+}
+
+type ShippingMethod {
+  code: String!
+  label: String!
+}
+
+enum FulfillmentServiceType {
+  GIFT_CARD
+  MANUAL
+  THIRD_PARTY
+}
+
+type FulfillmentService {
+  callbackUrl: URL
+  fulfillmentOrdersOptIn: Boolean!
+  handle: String!
+  id: ID!
+  inventoryManagement: Boolean!
+  location: Location
+  productBased: Boolean!
+  serviceName: String!
+  shippingMethods: [ShippingMethod!]!
+  type: FulfillmentServiceType!
+}
+
+type Fulfillment {
+  id: ID!
+  displayStatus: FulfillmentDisplayStatus
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  deliveredAt: DateTime
+  inTransitAt: DateTime
+  estimatedDeliveryAt: DateTime
+  service: FulfillmentService
+  location: Location
+  requiresShipping: Boolean!
+  name: String!
+  order: Order!
+  status: FulfillmentStatus!
+  totalQuantity: Int!
+  trackingInfo(first: Int): [FulfillmentTrackingInfo!]!
+}

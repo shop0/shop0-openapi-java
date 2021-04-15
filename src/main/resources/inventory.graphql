@@ -1,0 +1,58 @@
+type InventoryItem implements Node {
+  countryHarmonizedSystemCodes(
+    after: String
+    before: String
+    first: Int
+    last: Int
+    reverse: Boolean
+  ): CountryHarmonizedSystemCodeConnection!
+
+  inventoryLevels(
+    after: String
+    before: String
+    first: Int
+    last: Int
+    query: String
+    reverse: Boolean
+  ): InventoryLevelConnection!
+
+  countryCodeOfOrigin: CountryCode
+  createdAt: DateTime!
+  duplicateSkuCount: Int!
+  harmonizedSystemCode: String
+  id: ID!
+  inventoryHistoryUrl: URL
+  inventoryLevel(locationId: ID!): InventoryLevel
+  locationsCount: Int!
+  provinceCodeOfOrigin: String
+  requiresShipping: Boolean!
+  sku: String
+  tracked: Boolean!
+  trackedEditable: EditableProperty!
+  unitCost: Money
+  updatedAt: DateTime!
+  variant: ProductVariant!
+}
+
+type InventoryLevel implements Node {
+  available: Int!
+  canDeactivate: Boolean!
+  createdAt: DateTime!
+  deactivationAlert: String
+  deactivationAlertHtml: FormattedString
+  id: ID!
+  incoming: Int!
+  item: InventoryItem!
+  location: Location!
+  updatedAt: DateTime!
+}
+
+type InventoryLevelEdge {
+  cursor: String!
+  node: InventoryLevel!
+}
+
+type InventoryLevelConnection {
+  edges: [InventoryLevelEdge!]!
+  pageInfo: PageInfo!
+}

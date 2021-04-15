@@ -1,0 +1,222 @@
+extend type Query {
+  product(id: ID!): Product
+  productVariant(id: ID!): ProductVariant
+}
+
+extend type Mutation {
+  productCreate(input: ProductInput!): ProductCreate!
+  productDelete(input: ProductDeleteInput!): ProductDelete!
+}
+
+input ProductInput {
+  collectionsToJoin: [ID!]
+  collectionsToLeave: [ID!]
+  details: String
+  description: String
+  giftCard: Boolean
+  giftCardTemplateSuffix: String
+  handle: String
+  id: ID
+  images: [ImageInput!]
+  metafields: [MetafieldInput!]
+  options: [ProductOptionValueInput!]
+  privateMetafields: [MetafieldInput!]
+  productType: String
+  publishDate: DateTime
+  publishOn: DateTime
+  published: Boolean
+  publishedAt: DateTime
+  redirectNewHandle: Boolean
+  requiresSellingPlan: Boolean
+  seo: SEOInput
+  status: ProductStatus
+  tags: [TagInput!]
+  templateSuffix: String
+  title: String
+  variants: [ProductVariantInput!]
+  vendor: String
+}
+
+input ProductDeleteInput {
+  id: ID!
+}
+
+type ProductDelete {
+  deletedProductId: ID
+  shop: Shop
+  userErrors: [UserError!]!
+}
+
+type ProductCreate {
+  product: Product
+  shop: Shop
+  userErrors: [UserError!]!
+}
+
+enum ProductStatus {
+  ACTIVE
+  ARCHIVED
+  DRAFT
+}
+
+input ProductVariantInput {
+  title: String
+}
+
+input ProductOptionValueInput {
+  image: ImageInput
+  value: String!
+}
+
+enum ProductImageSortKeys {
+  CREATED_AT
+  ID
+  POSITION
+  RELEVANCE
+}
+
+enum ProductMediaSortKeys {
+  ID
+  POSITION
+  RELEVANCE
+}
+
+enum ProductVariantSortKeys {
+  ID
+  POSITION
+  RELEVANCE
+  SKU
+  TITLE
+}
+
+type ProductPriceRange {
+  minVariantPrice: Money!
+  maxVariantPrice: Money!
+}
+
+type ProductPriceRangeEdge {
+  cursor: String!
+  node: ProductPriceRange!
+}
+
+type ProductPriceRangeConnection {
+  edges: [ProductPriceRangeEdge!]!
+  pageInfo: PageInfo!
+}
+
+type ProductVariantEdge {
+  cursor: String!
+  node: ProductVariant!
+}
+
+type ProductVariantConnection {
+  edges: [ProductVariantEdge!]!
+  pageInfo: PageInfo!
+}
+
+type ProductOption {
+  id: ID!
+  name: String!
+  values: [ProductOptionValue!]!
+}
+
+type ProductOptionValue {
+  image: Image
+  value: String!
+}
+
+type Product implements HasMetafields & Node {
+  id: ID!
+  title: String!
+  createdAt: DateTime!
+  images(
+    after: String
+    before: String
+    crop: CropRegion
+    first: Int
+    last: Int
+    maxHeight: Int
+    maxWidth: Int
+    reverse: Boolean
+    scale: Int
+    sortKey: ProductImageSortKeys
+  ): ImageConnection!
+
+  media(
+    after: String
+    before: String
+    first: Int
+    last: Int
+    reverse: Boolean
+    sortKey: ProductMediaSortKeys
+  ): MediaConnection
+
+  metafields(
+    after: String
+    before: String
+    first: Int
+    last: Int
+    namespace: String
+    reverse: Boolean
+  ): MetafieldConnection!
+
+  metafield(key: String!, namespace: String!): Metafield
+
+  privateMetafields(
+    after: String
+    before: String
+    first: Int
+    last: Int
+    namespace: String
+    reverse: Boolean
+  ): MetafieldConnection!
+
+  privateMetafield(key: String!, namespace: String!): Metafield
+
+  presentmentPriceRanges(
+    after: String
+    before: String
+    first: Int
+    last: Int
+    presentmentCurrencies: [CurrencyCode!]
+    reverse: Boolean
+  ): ProductPriceRangeConnection!
+
+  variants(
+    after: String
+    before: String
+    first: Int
+    last: Int
+    reverse: Boolean
+    sortKey: ProductVariantSortKeys
+  ): ProductVariantConnection!
+
+  availableForSale: Boolean!
+  compareAtPriceRange: ProductPriceRange!
+  description: String!
+  details: String!
+  handle: String!
+
+  options(first: Int): [ProductOption!]!
+
+  priceRange: ProductPriceRange!
+  productType: String!
+  publishedAt: DateTime!
+  seo: SEO
+  tags: [Tag!]!
+  totalInventory: Int
+  updatedAt: DateTime!
+  variantBySelectedOptions(
+    selectedOptions: [SelectedOptionInput!]!
+  ): ProductVariant
+  vendor: String!
+}
+
+type ProductVariant {
+  id: ID!
+}
+
+input SelectedOptionInput {
+  name: String!
+  value: String!
+}
