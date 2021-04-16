@@ -1,4 +1,4 @@
-package com.shop0.openapi.graphql;
+package com.github.shop0.openapi.graphql;
 
 import com.kobylynskyi.graphql.codegen.model.graphql.GraphQLError;
 

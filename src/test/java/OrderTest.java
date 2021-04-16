@@ -1,9 +1,9 @@
 import com.kobylynskyi.graphql.codegen.model.graphql.GraphQLRequest;
-import com.shop0.openapi.graphql.api.QueryResolver;
-import com.shop0.openapi.graphql.model.*;
-import com.shop0.openapi.graphql.QueryResolverImpl;
-import com.shop0.openapi.graphql.Shop0ApiException;
-import com.shop0.openapi.graphql.Shop0Client;
+import com.github.shop0.openapi.graphql.api.QueryResolver;
+import com.github.shop0.openapi.graphql.model.*;
+import com.github.shop0.openapi.graphql.QueryResolverImpl;
+import com.github.shop0.openapi.graphql.Shop0ApiException;
+import com.github.shop0.openapi.graphql.Shop0Client;
 import org.junit.jupiter.api.Test;
 
 public class OrderTest {

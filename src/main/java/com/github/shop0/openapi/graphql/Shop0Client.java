@@ -1,4 +1,4 @@
-package com.shop0.openapi.graphql;
+package com.github.shop0.openapi.graphql;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
@@ -67,8 +67,6 @@ public class Shop0Client {
             return shop0Client;
         }
     }
-
-
 
     private OkHttpClient httpClient;
     private OkHttpClient buildHttpClient() {
