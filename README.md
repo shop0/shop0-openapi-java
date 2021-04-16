@@ -1,5 +1,5 @@
 ## shop0-openapi-java
-shop0 open api java sdk client
+shop0 open api java sdk
 
 ## 如何使用
 
