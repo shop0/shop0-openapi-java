@@ -9,7 +9,7 @@ shop0 open api java sdk
 <dependency>
     <groupId>com.shop0</groupId>
     <artifactId>shop0-openapi-java</artifactId>
-    <version>0.0.1</version>
+    <version>1.0.0</version>
 </dependency>
 ```
 - gradle
