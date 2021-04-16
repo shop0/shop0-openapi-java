@@ -25,4 +25,4 @@ compile group: 'com.shop0', name: 'shop0-openapi-java', version: '1.0.0'
 ### 关于 shop0
 shop0采用目前最先进的 云原生 / serverless 技术构建.
 
-![architecture](./docs/shop0-architecture.jpg)
+![architecture](https://cdn.nlark.com/yuque/0/2021/jpeg/2754028/1618531758980-c48016f6-dd52-4c8f-bbb3-aa3db34675ed.jpeg)
