@@ -4,7 +4,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.github.shop0</groupId>
+    <groupId>io.github.shop0</groupId>
     <artifactId>shop0-openapi-java</artifactId>
     <version>1.0.0</version>
     <name>shop0-openapi-java</name>
@@ -532,8 +532,8 @@
                                 <includePattern>.*\.graphql</includePattern>
                             </graphqlSchemas>
                             <outputDir>${project.build.directory}/generated-sources/client</outputDir>
-                            <modelPackageName>com.github.shop0.openapi.graphql.model</modelPackageName>
-                            <apiPackageName>com.github.shop0.openapi.graphql.api</apiPackageName>
+                            <modelPackageName>io.github.shop0.openapi.graphql.model</modelPackageName>
+                            <apiPackageName>io.github.shop0.openapi.graphql.api</apiPackageName>
                             <customTypesMapping>
                                 <DateTime>java.util.Date</DateTime>
                                 <!-- Following code can be used to generate boxed types instead of primitives:

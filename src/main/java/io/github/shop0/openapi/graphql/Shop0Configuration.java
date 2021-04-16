@@ -1,4 +1,4 @@
-package com.github.shop0.openapi.graphql;
+package io.github.shop0.openapi.graphql;
 
 public class Shop0Configuration {
     public String host;

@@ -1,8 +1,8 @@
-package com.github.shop0.openapi.graphql;
+package io.github.shop0.openapi.graphql;
 
 import com.kobylynskyi.graphql.codegen.model.graphql.GraphQLRequest;
-import com.github.shop0.openapi.graphql.api.QueryResolver;
-import com.github.shop0.openapi.graphql.model.*;
+import io.github.shop0.openapi.graphql.api.QueryResolver;
+import io.github.shop0.openapi.graphql.model.*;
 
 import javax.validation.constraints.NotNull;
 

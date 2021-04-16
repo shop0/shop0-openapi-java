@@ -7,7 +7,7 @@ shop0 open api java sdk
 - maven
 ```xml
 <dependency>
-    <groupId>com.shop0</groupId>
+    <groupId>io.github.shop0</groupId>
     <artifactId>shop0-openapi-java</artifactId>
     <version>1.0.0</version>
 </dependency>
@@ -15,7 +15,7 @@ shop0 open api java sdk
 - gradle
 ```bash
 //这里使用的是2.12
-compile group: 'com.shop0', name: 'shop0-openapi-java', version: '1.0.0'
+compile group: 'io.github.shop0', name: 'shop0-openapi-java', version: '1.0.0'
 ```
 
 
