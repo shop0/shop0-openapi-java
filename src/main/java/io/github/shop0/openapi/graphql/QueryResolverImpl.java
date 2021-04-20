@@ -28,22 +28,8 @@ public class QueryResolverImpl implements QueryResolver {
     }
 
     @Override
-    public @NotNull OrderConnectionTO orders(String after, String before, Integer first, Integer last, Boolean reverse) throws Exception {
-        OrdersQueryRequest queryRequest = new OrdersQueryRequest();
-        queryRequest.setAfter(after);
-        queryRequest.setBefore(before);
-        queryRequest.setFirst(first);
-        queryRequest.setLast(last);
-        queryRequest.setReverse(reverse);
-
-        OrderConnectionResponseProjection responseProjection = new OrderConnectionResponseProjection().totalCount();
-        GraphQLRequest graphQLRequest = new GraphQLRequest(queryRequest, responseProjection);
-
-        OrdersQueryResponse result = client.invoke(graphQLRequest, OrdersQueryResponse.class);
-        if (result.hasErrors()) {
-            throw new Shop0ApiException(result.getErrors());
-        }
-        return result.orders();
+    public @NotNull OrderConnectionTO orders(String after, String before, Integer first, Integer last, String query, Boolean reverse, String savedSearchId, OrderSortKeysTO sortKey) throws Exception {
+        return null;
     }
 
     @Override
@@ -73,8 +59,15 @@ public class QueryResolverImpl implements QueryResolver {
 //                .events(null)
                 .shippingAddress(new MailingAddressResponseProjection().all$())
                 .shippingLine(new ShippingLineResponseProjection()
-                        .originalPriceSet(new MoneyBagResponseProjection().all$())
-                        .phone())
+                                .originalPriceSet(new MoneyBagResponseProjection().all$())
+                                .phone()
+/*                        .requestedFulfillmentService(new FulfillmentServiceResponseProjection()
+                                .location(new LocationResponseProjection()
+                                        .inventoryLevel(new LocationInventoryLevelParametrizedInput().inventoryItemId("111"), new InventoryLevelResponseProjection().id())
+                                        .fulfillmentService(new FulfillmentServiceResponseProjection().id())
+                                )
+                        )*/
+                )
 //                .subtotalLineItemsQuantity()
 //                .tags(null)
                 .refunds(new RefundResponseProjection()
@@ -82,8 +75,22 @@ public class QueryResolverImpl implements QueryResolver {
                         .refundLineItems(new RefundLineItemConnectionResponseProjection()
                                 .edges(new RefundLineItemEdgeResponseProjection()
                                         .node(new RefundLineItemResponseProjection()
-                                                .lineItem(new LineItemResponseProjection().id())
-                                                .location(new LocationResponseProjection().address(new LocationAddressResponseProjection().all$()))
+                                                .lineItem(new LineItemResponseProjection()
+//                                                        .fulfillmentStatus()
+                                                        .id()
+                                                        .product(new ProductResponseProjection()
+                                                                .id()
+                                                                .title()
+                                                                .images(new ImageConnectionResponseProjection()
+                                                                        .edges(new ImageEdgeResponseProjection()
+                                                                                .node(new ImageResponseProjection().all$())))
+                                                                .description()
+                                                                .details()
+                                                        )
+                                                        .quantity()
+                                                        .sku())
+                                                .location(new LocationResponseProjection()
+                                                        .address(new LocationAddressResponseProjection().all$()))
                                                 .priceSet(new MoneyBagResponseProjection().all$())
                                                 .quantity()))))
 //                .totalWeight()
@@ -97,9 +104,29 @@ public class QueryResolverImpl implements QueryResolver {
                 .lineItems(new LineItemConnectionResponseProjection()
                         .edges(new LineItemEdgeResponseProjection()
                                 .node(new LineItemResponseProjection()
-                                        .id())))
+//                                        .fulfillmentStatus()
+                                                .id()
+                                                .image(new ImageResponseProjection().all$())
+                                                .product(new ProductResponseProjection()
+                                                        .id()
+                                                        .title()
+                                                        .images(new ImageConnectionResponseProjection()
+                                                                .edges(new ImageEdgeResponseProjection()
+                                                                        .node(new ImageResponseProjection().all$())))
+                                                        .description()
+                                                        .details()
+                                                )
+                                                .quantity()
+                                                .sku()
+                                                .title()
+                                )))
                 .fulfillments(new FulfillmentResponseProjection()
-                        .id())
+                                .id()
+//                        .displayStatus()
+                                .createdAt()
+                                .updatedAt()
+//                        .status()
+                )
 //                .risks(null)
 //                .totalCapturableSet(null)
 //                .totalDiscountsSet(null)
@@ -114,9 +141,9 @@ public class QueryResolverImpl implements QueryResolver {
 //                .subtotalPriceSet(null)
 //                .transactions(null)
                 .unpaid()
-//                .updatedAt()
+                .updatedAt()
 //                .taxesIncluded()
-//                .taxLines(null)
+//                .taxLines(new TaxLineResponseProjection())
                 ;
         return proj;
     }

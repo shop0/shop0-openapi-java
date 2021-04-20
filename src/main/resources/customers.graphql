@@ -83,7 +83,7 @@ type Customer implements Node & HasMetafields & HasEvents {
   lastOrder: Order
 
   note: String
-  ordersCount: UInt64!
+  ordersCount: UnsignedInt64!
   createdAt: DateTime!
   updatedAt: DateTime!
 }

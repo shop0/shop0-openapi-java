@@ -1,75 +1,494 @@
 enum FulfillmentDisplayStatus {
-  SUBMITTED
-  CANCELED
-  CONFIRMED
-  DELIVERED
-  FAILURE
-  FULFILLED
-  IN_TRANSIT
-  LABEL_PRINTED
-  LABEL_PURCHASED
-  LABEL_VOIDED
-  MARKED_AS_FULFILLED
-  NOT_DELIVERED
-  OUT_FOR_DELIVERY
-  PICKED_UP
-  READY_FOR_PICKUP
-  ATTEMPTED_DELIVERY
+    SUBMITTED
+    CANCELED
+    CONFIRMED
+    DELIVERED
+    FAILURE
+    FULFILLED
+    IN_TRANSIT
+    LABEL_PRINTED
+    LABEL_PURCHASED
+    LABEL_VOIDED
+    MARKED_AS_FULFILLED
+    NOT_DELIVERED
+    OUT_FOR_DELIVERY
+    PICKED_UP
+    READY_FOR_PICKUP
+    ATTEMPTED_DELIVERY
 }
 
 enum FulfillmentStatus {
-  CANCELLED
-  ERROR
-  FAILURE
-  OPEN
-  PENDING
-  SUCCESS
+    # The fulfillment was canceled.
+    CANCELLED
+    # There was an error with the fulfillment request.
+    ERROR
+    # The fulfillment request failed.
+    FAILURE
+    # The third-party fulfillment service has acknowledged the fulfilment and is processing it.
+    OPEN
+    # Shopify has created the fulfillment and is waiting for the third-party fulfillment service to transition it to open or success.
+    PENDING
+    # The fulfillment was completed successfully.
+    SUCCESS
 }
 
 type FulfillmentTrackingInfo {
-  company: String
-  number: String
-  url: URL
+    # The name of the tracking company.
+    company: String
+    # The tracking number of the fulfillment.
+    number: String
+    # The URLs to track the fulfillment.
+    url: URL
 }
 
 type ShippingMethod {
-  code: String!
-  label: String!
+    # A unique code associated with the rate. For example: expedited_mail
+    code: String!
+    # A description of the rate, which customers will see at checkout. For example: Includes tracking and insurance.
+    label: String!
 }
 
 enum FulfillmentServiceType {
-  GIFT_CARD
-  MANUAL
-  THIRD_PARTY
+    # Fulfillment by gift card.
+    GIFT_CARD
+    # Manual fulfillment by the merchant.
+    MANUAL
+    # Fullfillment by a third-party fulfillment service.
+    THIRD_PARTY
 }
 
 type FulfillmentService {
-  callbackUrl: URL
-  fulfillmentOrdersOptIn: Boolean!
-  handle: String!
-  id: ID!
-  inventoryManagement: Boolean!
-  location: Location
-  productBased: Boolean!
-  serviceName: String!
-  shippingMethods: [ShippingMethod!]!
-  type: FulfillmentServiceType!
+    # The callback URL the fulfillment service has registered for requests.
+    callbackUrl: URL
+    # Whether the fulfillment service has opted into fulfillment order based requests.
+    fulfillmentOrdersOptIn: Boolean!
+    # Human-readable unique identifier for this fulfillment service.
+    handle: String!
+    id: ID!
+    # Whether the fulfillment service tracks product inventory and provides updates to Shopify.
+    inventoryManagement: Boolean!
+    # Location associated with the fulfillment service.
+    location: Location
+    # Whether the fulfillment service supports local deliveries.
+    productBased: Boolean!
+    # The name of the fulfillment service as seen by merchants.
+    serviceName: String!
+    # Shipping methods associated with the fulfillment service provider.
+    shippingMethods: [ShippingMethod!]!
+    # Type associated with the fulfillment service.
+    type: FulfillmentServiceType!
+}
+
+enum FulfillmentEventSortKeys{
+    # Sort by the happened_at value.
+    HAPPENED_AT
+    # Sort by the id value.
+    ID
+    # During a search (i.e. when the query parameter has been specified on the connection) this sorts the results by relevance to the search term(s). When no search query is specified, this sort key is not deterministic and should not be used.
+    RELEVANCE
 }
 
 type Fulfillment {
-  id: ID!
-  displayStatus: FulfillmentDisplayStatus
-  createdAt: DateTime!
-  updatedAt: DateTime!
-  deliveredAt: DateTime
-  inTransitAt: DateTime
-  estimatedDeliveryAt: DateTime
-  service: FulfillmentService
-  location: Location
-  requiresShipping: Boolean!
-  name: String!
-  order: Order!
-  status: FulfillmentStatus!
-  totalQuantity: Int!
-  trackingInfo(first: Int): [FulfillmentTrackingInfo!]!
+    id: ID!
+
+    # The history of events associated with this fulfillment.
+    events(
+        after: String
+        before: String
+        first: Int
+        last: Int
+        reverse: Boolean
+        sortKey:FulfillmentEventSortKeys
+    ): FulfillmentEventConnection!
+
+    # List of the fulfillment's line items.
+    fulfillmentLineItems(
+        after: String
+        before: String
+        first: Int
+        last: Int
+        reverse: Boolean
+    ):  FulfillmentLineItemConnection!
+
+    # A list of fulfillment orders for the fulfillment.
+    fulfillmentOrders(
+        after: String
+        before: String
+        first: Int
+        last: Int
+        reverse: Boolean
+    ): FulfillmentOrderConnection!
+
+    # The date and time when the fulfillment was created.
+    createdAt: DateTime!
+    # The date that this fulfillment was delivered.
+    deliveredAt: DateTime
+    # Human readable display status for this fulfillment.
+    displayStatus: FulfillmentDisplayStatus
+    # The estimated date that this fulfillment will arrive.
+    estimatedDeliveryAt: DateTime
+    # The date and time when the fulfillment went into transit.
+    inTransitAt: DateTime
+    # The location that the fulfillment was processed at.
+    location: Location
+    # Human readable reference identifier for this fulfillment.
+    name: String!
+    # The order for which the fulfillment was created.
+    order: Order!
+    # Whether any of the line items in the fulfillment require shipping.
+    requiresShipping: Boolean!
+    # Fulfillment service associated with the fulfillment.
+    service: FulfillmentService
+    # The status of the fulfillment.
+    status: FulfillmentStatus!
+    # Sum of all line item quantities for the fulfillment.
+    totalQuantity: Int!
+    # Tracking information associated with the fulfillment, such as the tracking company, tracking number, and tracking URL.
+    trackingInfo(first: Int): [FulfillmentTrackingInfo!]!
+    # The date and time when the fulfillment was last modified.
+    updatedAt: DateTime!
+}
+
+type FulfillmentEdge {
+    cursor: String!
+    node: Fulfillment!
+}
+
+type FulfillmentConnection {
+    totalCount: Int
+    edges: [FulfillmentEdge!]!
+    pageInfo: PageInfo!
+}
+
+# Represents a fulfillment order.
+# In Shop0, a fulfillment order represents a group of one or more items in an order that are to be fulfilled from the same location.
+# There can be more than one fulfillment order for an order at a given location.
+type FulfillmentOrder {
+    id: ID!
+
+    # A list of fulfillments for the fulfillment order.
+    fulfillments(
+        after: String
+        before: String
+        first: Int
+        last: Int
+        reverse: Boolean
+    ): FulfillmentConnection!
+
+    # A list of the fulfillment order's line items.
+    lineItems(
+        after: String
+        before: String
+        first: Int
+        last: Int
+        reverse: Boolean
+    ): FulfillmentOrderLineItemConnection!
+
+    # A list of locations that the fulfillment order can potentially move to.
+    locationsForMove(
+        after: String
+        before: String
+        first: Int
+        last: Int
+        reverse: Boolean
+    ): FulfillmentOrderLocationForMoveConnection!
+
+    # A list of requests sent by the merchant to the fulfillment service for this fulfillment order.
+    merchantRequests(
+        after: String
+        before: String
+        first: Int
+        last: Int
+        reverse: Boolean
+    ) :FulfillmentOrderMerchantRequestConnection!
+
+    # The fulfillment order's assigned location. This is the location expected to perform fulfillment.
+    assignedLocation: FulfillmentOrderAssignedLocation!
+    # Delivery method of this fulfillment order.
+    deliveryMethod: DeliveryMethod
+    # The destination where the items should be sent.
+    destination: FulfillmentOrderDestination
+    # The date and time at which the fulfillment order will be fulfillable.
+    fulfillAt: DateTime
+    # The order that's associated with the fulfillment order.
+    order: Order!
+    # The request status of the fulfillment order.
+    requestStatus: FulfillmentOrderRequestStatus!
+    # The status of the fulfillment order.
+    status: FulfillmentOrderStatus!
+    # The actions that can be performed on this fulfillment order.
+    supportedActions: [FulfillmentOrderSupportedAction!]!
+}
+
+enum FulfillmentOrderAction {
+    # Cancel a fulfillment order. The corresponding mutation for this action is FulfillmentOrderCancel.
+    CANCEL_FULFILLMENT_ORDER
+    # Create a fulfillment for selected line items in the fulfillment order. The corresponding mutation for this action is FulfillmentCreateV2.
+    CREATE_FULFILLMENT
+    # Open an external URL to initiate the fulfillment process outside Shopify.
+    EXTERNAL
+    # Mark the fulfillment order as open.
+    MARK_AS_OPEN
+    # Move a fulfillment order. The corresponding mutation for this action is FulfillmentOrderMove.
+    MOVE
+    # Send a cancellation request to the fulfillment service of a fulfillment order. The corresponding mutation for this action is FulfillmentOrderSubmitCancellationRequest.
+    REQUEST_CANCELLATION
+    # Send a request for fulfilling selected line items in a fulfillment order to a fulfillment service. The corresponding mutation for this action is FulfillmentOrderSubmitFulfillmentRequest.
+    REQUEST_FULFILLMENT
+}
+
+type FulfillmentOrderSupportedAction {
+    # The action value.
+    action: FulfillmentOrderAction!
+    # The external URL to be used to initiate the fulfillment process outside Shopify.
+    externalUrl: URL
+}
+
+enum FulfillmentOrderStatus {
+    # The fulfillment order has been cancelled by the merchant.
+    CANCELLED
+    # The fulfillment order has been completed and closed.
+    CLOSED
+    # The fulfillment order cannot be completed as requested.
+    INCOMPLETE
+    # The fulfillment order is being processed.
+    IN_PROGRESS
+    # The fulfillment order has been opened.
+    OPEN
+    # The fulfillment order is scheduled for fulfillment.
+    SCHEDULED
+}
+
+# The merchant requested fulfillment for this fulfillment order.
+enum FulfillmentOrderRequestStatus {
+    # The fulfillment service accepted the merchant's fulfillment request.
+    ACCEPTED
+    # The fulfillment service accepted the merchant's fulfillment cancellation request.
+    CANCELLATION_ACCEPTED
+    # The fulfillment service rejected the merchant's fulfillment cancellation request.
+    CANCELLATION_REJECTED
+    # The merchant requested a cancellation of the fulfillment request for this fulfillment order.
+    CANCELLATION_REQUESTED
+    # The fulfillment service closed the fulfillment order without completing it.
+    CLOSED
+    # The fulfillment service rejected the merchant's fulfillment request.
+    REJECTED
+    # The merchant requested fulfillment for this fulfillment order.
+    SUBMITTED
+    # The initial request status for the newly created fulfillment orders. This is the only valid request status for fulfillment orders that aren't assigned to a fulfillment service.
+    UNSUBMITTED
+}
+
+# Represents the destination where the items should be sent upon fulfillment.
+type FulfillmentOrderDestination{
+    id: ID!
+    # The first line of the address of the destination.
+    address1: String
+    # The second line of the address of the destination.
+    address2: String
+    # The city of the destination.
+    city: String
+    # The company of the destination.
+    company: String
+    # The two-letter country code of the destination.
+    countryCode: CountryCode
+    # The email of the customer at the destination.
+    email: String
+    # The first name of the customer at the destination.
+    firstName: String
+    # The last name of the customer at the destination.
+    lastName: String
+    # The phone number of the customer at the destination.
+    phone: String
+    # The province of the destination.
+    province: String
+    # The ZIP code of the destination.
+    zip: String
+}
+
+enum DeliveryMethodType{
+    # Local delivery method.
+    LOCAL
+    # No delivery method.
+    NONE
+    # Pick-up delivery method.
+    PICK_UP
+    # Retail delivery method represents items delivered immediately in a retail store.
+    RETAIL
+    # Shipping delivery method.
+    SHIPPING
+}
+
+type DeliveryMethod {
+    id: ID!
+    # The type of the delivery method.
+    methodType: DeliveryMethodType!
+}
+
+type FulfillmentOrderAssignedLocation {
+    # The first line of the address for the location.
+    address1: String
+    # The second line of the address for the location.
+    address2: String
+    # The city of the location.
+    city: String
+    # The two-letter country code of the location.
+    countryCode: CountryCode!
+    # The location where the fulfillment order was created. This can differ from the FulfillmentOrderAssignedLocation if the location was updated since the fulfillment order was closed.
+    location: Location
+    # The name of the location.
+    name: String!
+    # The phone number of the location.
+    phone: String
+    # The province of the location.
+    province: String
+    # The ZIP code of the location.
+    zip: String
+}
+
+type FulfillmentLineItem {
+    id: ID!
+    # The total price after discounts are applied in shop and presentment currencies.
+    discountedTotalSet: MoneyBag!
+    # The associated order's line item.
+    lineItem: LineItem!
+    # The total price before discounts are applied in shop and presentment currencies.
+    originalTotalSet: MoneyBag!
+    # Number of line items in the fulfillment.
+    quantity: Int
+}
+
+type FulfillmentLineItemEdge {
+    cursor: String!
+    node: FulfillmentLineItem!
+}
+
+type FulfillmentLineItemConnection{
+    totalCount: Int
+    edges: [FulfillmentLineItemEdge!]!
+    pageInfo: PageInfo!
+}
+
+enum FulfillmentEventStatus{
+    # A delivery was attempted.
+    ATTEMPTED_DELIVERY
+    # The fulfillment is confirmed.
+    CONFIRMED
+    # The fulfillment was successfully delivered.
+    DELIVERED
+    # The fulfillment request failed.
+    FAILURE
+    # The fulfillment is in transit.
+    IN_TRANSIT
+    # A purchased shipping label has been printed.
+    LABEL_PRINTED
+    # A shipping label has been purchased.
+    LABEL_PURCHASED
+    # The fulfillment is out for delivery.
+    OUT_FOR_DELIVERY
+    # The fulfillment is ready to be picked up.
+    READY_FOR_PICKUP
+}
+
+type FulfillmentEvent {
+    id: ID!
+    # The time at which this fulfillment event happened.
+    happenedAt: DateTime!
+    # The status of this fulfillment event.
+    status: FulfillmentEventStatus!
+}
+
+type FulfillmentEventEdge {
+    cursor: String!
+    node: FulfillmentEvent!
+}
+
+type FulfillmentEventConnection{
+    totalCount: Int
+    edges: [FulfillmentEventEdge!]!
+    pageInfo: PageInfo!
+}
+
+enum FulfillmentOrderMerchantRequestKind {
+    # The merchant requested cancellation of an accepted or in-progress fulfillment order.
+    CANCELLATION_REQUEST
+    # The merchant requested fulfillment for a fulfillment order.
+    FULFILLMENT_REQUEST
+}
+
+type FulfillmentOrderMerchantRequest{
+    id: ID!
+    # The kind of request made.
+    kind: FulfillmentOrderMerchantRequestKind!
+    # The optional message that the merchant included in the request.
+    message: String
+    # Additional options requested by the merchant. These depend on the kind of the request. For example, for a FULFILLMENT_REQUEST, one option is notify_customer, which indicates whether the merchant intends to notify the customer upon fulfillment. The fulfillment service can then set notifyCustomer when making calls to FulfillmentCreateV2.
+    requestOptions: JSON
+    # The response from the fulfillment service.
+    responseData: JSON
+    # The timestamp when the request was made.
+    sentAt: DateTime!
+}
+
+type FulfillmentOrderMerchantRequestEdge {
+    cursor: String!
+    node: FulfillmentOrderMerchantRequest!
+}
+
+type FulfillmentOrderMerchantRequestConnection {
+    totalCount: Int
+    edges: [FulfillmentOrderMerchantRequestEdge!]!
+    pageInfo: PageInfo!
+}
+
+type FulfillmentOrderLocationForMove {
+    # The location being considered as the fulfillment order's new assigned location.
+    location: Location!
+    # A human-readable string with the reason why the fulfillment order, or some of its line items, can't be moved to the location.
+    message: String
+    # Whether the fulfillment order can be moved to the location.
+    movable: Boolean!
+}
+
+type FulfillmentOrderLocationForMoveEdge {
+    cursor: String!
+    node: FulfillmentOrderLocationForMove!
+}
+
+type FulfillmentOrderLocationForMoveConnection {
+    totalCount: Int
+    edges: [FulfillmentOrderLocationForMoveEdge!]!
+    pageInfo: PageInfo!
+}
+
+type FulfillmentOrderLineItem{
+    id: ID!
+    # The associated order line item.
+    lineItem: LineItem!
+    # The number of units remaining to be fulfilled.
+    remainingQuantity: Int!
+    # The total number of units to be fulfilled.
+    totalQuantity: Int!
+}
+
+type FulfillmentOrderLineItemEdge {
+    cursor: String!
+    node: FulfillmentOrderLineItem!
+}
+
+type FulfillmentOrderLineItemConnection {
+    totalCount: Int
+    edges: [FulfillmentOrderLineItemEdge!]!
+    pageInfo: PageInfo!
+}
+
+type FulfillmentOrderEdge {
+    cursor: String!
+    node: FulfillmentOrder!
+}
+
+type FulfillmentOrderConnection {
+    totalCount: Int
+    edges: [FulfillmentOrderEdge!]!
+    pageInfo: PageInfo!
 }
