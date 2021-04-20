@@ -39,7 +39,17 @@ public class QueryResolverImpl implements QueryResolver {
 
     @Override
     public ProductTO product(@NotNull String id) throws Exception {
-        return null;
+        ProductQueryRequest req = new ProductQueryRequest();
+        req.setId(id);
+
+        ProductResponseProjection proj = this.getProductResponseProjection();
+        GraphQLRequest graphQLRequest = new GraphQLRequest(req, proj);
+        ProductQueryResponse result = this.client.invoke(graphQLRequest, ProductQueryResponse.class);
+        if (result.hasErrors()) {
+            throw new Shop0ApiException(result.getErrors());
+        }
+
+        return result.product();
     }
 
     @Override
@@ -144,6 +154,41 @@ public class QueryResolverImpl implements QueryResolver {
                 .updatedAt()
 //                .taxesIncluded()
 //                .taxLines(new TaxLineResponseProjection())
+                ;
+        return proj;
+    }
+
+    public ProductResponseProjection getProductResponseProjection(){
+        ProductResponseProjection proj = new ProductResponseProjection()
+                .id()
+                .title()
+                .createdAt()
+                .images(new ImageConnectionResponseProjection().edges(new ImageEdgeResponseProjection().node(new ImageResponseProjection().all$())))
+//                .media()
+//                .metafields()
+//                .metafield()
+//                .privateMetafields()
+//                .privateMetafield()
+//                .presentmentPriceRanges()
+//                .variants()
+//                .availableForSale()
+//                .compareAtPriceRange()
+                .description()
+                .details()
+//                .handle()
+//                .options()
+                .priceRange(new ProductPriceRangeResponseProjection()
+                        .minVariantPrice(new MoneyResponseProjection().all$())
+                        .maxVariantPrice(new MoneyResponseProjection().all$())
+                )
+                .productType()
+                .publishedAt()
+//                .seo()
+//                .tags(new TagResponseProjection())
+                .totalInventory()
+                .updatedAt()
+//                .variantBySelectedOptions()
+//                .vendor()
                 ;
         return proj;
     }
