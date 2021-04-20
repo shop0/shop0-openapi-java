@@ -28,22 +28,8 @@ public class QueryResolverImpl implements QueryResolver {
     }
 
     @Override
-    public @NotNull OrderConnectionTO orders(String after, String before, Integer first, Integer last, Boolean reverse) throws Exception {
-        OrdersQueryRequest queryRequest = new OrdersQueryRequest();
-        queryRequest.setAfter(after);
-        queryRequest.setBefore(before);
-        queryRequest.setFirst(first);
-        queryRequest.setLast(last);
-        queryRequest.setReverse(reverse);
-
-        OrderConnectionResponseProjection responseProjection = new OrderConnectionResponseProjection().totalCount();
-        GraphQLRequest graphQLRequest = new GraphQLRequest(queryRequest, responseProjection);
-
-        OrdersQueryResponse result = client.invoke(graphQLRequest, OrdersQueryResponse.class);
-        if (result.hasErrors()) {
-            throw new Shop0ApiException(result.getErrors());
-        }
-        return result.orders();
+    public @NotNull OrderConnectionTO orders(String after, String before, Integer first, Integer last, String query, Boolean reverse, String savedSearchId, OrderSortKeysTO sortKey) throws Exception {
+        return null;
     }
 
     @Override
