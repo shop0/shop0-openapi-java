@@ -1,37 +1,84 @@
 enum EventSortKeys {
-  CREATED_AT
-  ID
-  RELEVANCE
+    CREATED_AT
+    ID
+    RELEVANCE
 }
 
 type Event {
-  id: ID!
-  appTitle: String
-  attributeToApp: Boolean!
-  attributeToUser: Boolean!
-  createdAt: DateTime!
-  criticalAlert: Boolean!
-  message: FormattedString!
+    id: ID!
+    appTitle: String
+    attributeToApp: Boolean!
+    attributeToUser: Boolean!
+    createdAt: DateTime!
+    criticalAlert: Boolean!
+    message: FormattedString!
 }
 
 type EventEdge {
-  cursor: String!
-  node: Event!
+    cursor: String!
+    node: Event!
 }
 
 type EventConnection {
-  edges: [EventEdge!]!
-  pageInfo: PageInfo!
+    edges: [EventEdge!]!
+    pageInfo: PageInfo!
 }
 
 interface HasEvents {
-  events(
-    after: String
-    before: String
-    first: Int
-    last: Int
-    query: String
-    reverse: Boolean
-    sortKey: EventSortKeys
-  ): EventConnection!
+    events(
+        after: String
+        before: String
+        first: Int
+        last: Int
+        query: String
+        reverse: Boolean
+        sortKey: EventSortKeys
+    ): EventConnection!
+}
+
+type ResourceAlertAction {
+    # Whether the action is primary or not.
+    primary: Boolean!
+    # Resource for the action to show.
+    show: String
+    # Action title.
+    title: String!
+    # Action target URL.
+    url: URL!
+}
+
+enum ResourceAlertIcon {
+    # A checkmark inside a circle.
+    CHECKMARK_CIRCLE
+    # A lowercase i inside a circle.
+    INFORMATION_CIRCLE
+}
+
+enum ResourceAlertSeverity{
+    # Indicates a critical alert.
+    CRITICAL
+    # Indicates a neutral alert.
+    DEFAULT
+    # Indicates an informative alert.
+    INFO
+    # Indicates a success alert.
+    SUCCESS
+    # Indicates a warning alert.
+    WARNING
+}
+
+# Presents information or problems to merchants, with 1 or more actions that they can take. They can optionally have a specific icon and be dismissed by merchants.
+type ResourceAlert {
+    # Buttons in the alert that link to related information. For example, View risk assessment.
+    actions: [ResourceAlertAction!]!
+    # Details about the alert.
+    content: HTML!
+    # Unique identifier that appears when an alert is manually closed by the merchant. Most alerts cannot be manually closed.
+    dismissibleHandle: String
+    # Icon that displays with the alert.
+    icon: ResourceAlertIcon
+    # Indication of how important the alert is.
+    severity: ResourceAlertSeverity!
+    # The name of the alert.
+    title: String!
 }

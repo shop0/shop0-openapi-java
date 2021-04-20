@@ -2,669 +2,671 @@ scalar DateTime
 scalar URL
 scalar FormattedString
 scalar JSON
-scalar UInt64
+scalar UnsignedInt64
+scalar HTML
+scalar Decimal
 
 interface Node {
-  id: ID!
+    id: ID!
 }
 
 interface HasMetafields {
-  metafield(key: String!, namespace: String!): Metafield
+    metafield(key: String!, namespace: String!): Metafield
 
-  metafields(
-    after: String
-    before: String
-    first: Int
-    last: Int
-    namespace: String
-    reverse: Boolean
-  ): MetafieldConnection!
+    metafields(
+        after: String
+        before: String
+        first: Int
+        last: Int
+        namespace: String
+        reverse: Boolean
+    ): MetafieldConnection!
 
-  privateMetafield(key: String!, namespace: String!): Metafield
+    privateMetafield(key: String!, namespace: String!): Metafield
 
-  privateMetafields(
-    after: String
-    before: String
-    first: Int
-    last: Int
-    namespace: String
-    reverse: Boolean
-  ): MetafieldConnection!
+    privateMetafields(
+        after: String
+        before: String
+        first: Int
+        last: Int
+        namespace: String
+        reverse: Boolean
+    ): MetafieldConnection!
 }
 
 enum CountryCode {
-  ZW
-  AE
-  AF
-  AG
-  AI
-  AL
-  AM
-  AN
-  AO
-  AR
-  AT
-  AU
-  AW
-  AX
-  AZ
-  BA
-  BB
-  BD
-  BE
-  BF
-  BG
-  BH
-  BI
-  BJ
-  BL
-  BM
-  BN
-  BO
-  BQ
-  BR
-  BS
-  BT
-  BV
-  BW
-  BY
-  BZ
-  CA
-  CC
-  CD
-  CF
-  CG
-  CH
-  CI
-  CK
-  CL
-  CM
-  CN
-  CO
-  CR
-  CU
-  CV
-  CW
-  CX
-  CY
-  CZ
-  DE
-  DJ
-  DK
-  DM
-  DO
-  DZ
-  EC
-  EE
-  EG
-  EH
-  ER
-  ES
-  ET
-  FI
-  FJ
-  FK
-  FO
-  FR
-  GA
-  GB
-  GD
-  GE
-  GF
-  GG
-  GH
-  GI
-  GL
-  GM
-  GN
-  GP
-  GQ
-  GR
-  GS
-  GT
-  GW
-  GY
-  HK
-  HM
-  HN
-  HR
-  HT
-  HU
-  ID
-  IE
-  IL
-  IM
-  IN
-  IO
-  IQ
-  IR
-  IS
-  IT
-  JE
-  JM
-  JO
-  JP
-  KE
-  KG
-  KH
-  KI
-  KM
-  KN
-  KP
-  KR
-  KW
-  KY
-  KZ
-  LA
-  LB
-  LC
-  LI
-  LK
-  LR
-  LS
-  LT
-  LU
-  LV
-  LY
-  MA
-  MC
-  MD
-  ME
-  MF
-  MG
-  MK
-  ML
-  MM
-  MN
-  MO
-  MQ
-  MR
-  MS
-  MT
-  MU
-  MV
-  MW
-  MX
-  MY
-  MZ
-  NA
-  NC
-  NE
-  NF
-  NG
-  NI
-  NL
-  NO
-  NP
-  NR
-  NU
-  NZ
-  OM
-  PA
-  PE
-  PF
-  PG
-  PH
-  PK
-  PL
-  PM
-  PN
-  PS
-  PT
-  PY
-  QA
-  RE
-  RO
-  RS
-  RU
-  RW
-  SA
-  SB
-  SC
-  SD
-  SE
-  SG
-  SH
-  SI
-  SJ
-  SK
-  SL
-  SM
-  SN
-  SO
-  SR
-  SS
-  ST
-  SV
-  SX
-  SY
-  SZ
-  TC
-  TD
-  TF
-  TG
-  TH
-  TJ
-  TK
-  TL
-  TM
-  TN
-  TO
-  TR
-  TT
-  TV
-  TW
-  TZ
-  UA
-  UG
-  UM
-  US
-  UY
-  UZ
-  VA
-  VC
-  VE
-  VG
-  VN
-  VU
-  WF
-  WS
-  XK
-  YE
-  YT
-  ZA
-  ZM
-  AD
+    ZW
+    AE
+    AF
+    AG
+    AI
+    AL
+    AM
+    AN
+    AO
+    AR
+    AT
+    AU
+    AW
+    AX
+    AZ
+    BA
+    BB
+    BD
+    BE
+    BF
+    BG
+    BH
+    BI
+    BJ
+    BL
+    BM
+    BN
+    BO
+    BQ
+    BR
+    BS
+    BT
+    BV
+    BW
+    BY
+    BZ
+    CA
+    CC
+    CD
+    CF
+    CG
+    CH
+    CI
+    CK
+    CL
+    CM
+    CN
+    CO
+    CR
+    CU
+    CV
+    CW
+    CX
+    CY
+    CZ
+    DE
+    DJ
+    DK
+    DM
+    DO
+    DZ
+    EC
+    EE
+    EG
+    EH
+    ER
+    ES
+    ET
+    FI
+    FJ
+    FK
+    FO
+    FR
+    GA
+    GB
+    GD
+    GE
+    GF
+    GG
+    GH
+    GI
+    GL
+    GM
+    GN
+    GP
+    GQ
+    GR
+    GS
+    GT
+    GW
+    GY
+    HK
+    HM
+    HN
+    HR
+    HT
+    HU
+    ID
+    IE
+    IL
+    IM
+    IN
+    IO
+    IQ
+    IR
+    IS
+    IT
+    JE
+    JM
+    JO
+    JP
+    KE
+    KG
+    KH
+    KI
+    KM
+    KN
+    KP
+    KR
+    KW
+    KY
+    KZ
+    LA
+    LB
+    LC
+    LI
+    LK
+    LR
+    LS
+    LT
+    LU
+    LV
+    LY
+    MA
+    MC
+    MD
+    ME
+    MF
+    MG
+    MK
+    ML
+    MM
+    MN
+    MO
+    MQ
+    MR
+    MS
+    MT
+    MU
+    MV
+    MW
+    MX
+    MY
+    MZ
+    NA
+    NC
+    NE
+    NF
+    NG
+    NI
+    NL
+    NO
+    NP
+    NR
+    NU
+    NZ
+    OM
+    PA
+    PE
+    PF
+    PG
+    PH
+    PK
+    PL
+    PM
+    PN
+    PS
+    PT
+    PY
+    QA
+    RE
+    RO
+    RS
+    RU
+    RW
+    SA
+    SB
+    SC
+    SD
+    SE
+    SG
+    SH
+    SI
+    SJ
+    SK
+    SL
+    SM
+    SN
+    SO
+    SR
+    SS
+    ST
+    SV
+    SX
+    SY
+    SZ
+    TC
+    TD
+    TF
+    TG
+    TH
+    TJ
+    TK
+    TL
+    TM
+    TN
+    TO
+    TR
+    TT
+    TV
+    TW
+    TZ
+    UA
+    UG
+    UM
+    US
+    UY
+    UZ
+    VA
+    VC
+    VE
+    VG
+    VN
+    VU
+    WF
+    WS
+    XK
+    YE
+    YT
+    ZA
+    ZM
+    AD
 }
 
 type UserError {
-  field: [String!]
-  message: String!
+    field: [String!]
+    message: String!
 }
 
 enum CropRegion {
-  BOTTOM
-  CENTER
-  LEFT
-  RIGHT
-  TOP
+    BOTTOM
+    CENTER
+    LEFT
+    RIGHT
+    TOP
 }
 
 type PageInfo {
-  hasNextPage: Boolean!
-  hasPreviousPage: Boolean!
-  startCursor: String
-  endCursor: String
+    hasNextPage: Boolean!
+    hasPreviousPage: Boolean!
+    startCursor: String
+    endCursor: String
 }
 
 type Image {
-  id: ID!
-  alt: String!
-  width: Int
-  height: Int
-  originalSrc: URL!
-  transformedSrc: URL!
+    id: ID!
+    alt: String!
+    width: Int
+    height: Int
+    originalSrc: URL!
+    transformedSrc: URL!
 }
 
 type ImageEdge {
-  cursor: String!
-  node: Image!
+    cursor: String!
+    node: Image!
 }
 
 type ImageConnection {
-  edges: [ImageEdge!]!
-  pageInfo: PageInfo!
+    edges: [ImageEdge!]!
+    pageInfo: PageInfo!
 }
 
 type MailingAddress {
-  address1: String
-  address2: String
-  city: String
-  company: String
-  country: String
-  countryCode: CountryCode
-  firstName: String
-  formatted(withCompany: Boolean, withName: Boolean): [String!]!
+    address1: String
+    address2: String
+    city: String
+    company: String
+    country: String
+    countryCode: CountryCode
+    firstName: String
+    formatted(withCompany: Boolean, withName: Boolean): [String!]!
 
-  formattedArea: String
-  id: ID!
-  lastName: String
-  latitude: Float
-  longitude: Float
-  name: String
-  phone: String
-  province: String
-  provinceCode: String
-  zip: String
+    formattedArea: String
+    id: ID!
+    lastName: String
+    latitude: Float
+    longitude: Float
+    name: String
+    phone: String
+    province: String
+    provinceCode: String
+    zip: String
 }
 
 enum MediaContentType {
-  EXTERNAL_VIDEO
-  IMAGE
-  VIDEO
-  MODEL_3D
+    EXTERNAL_VIDEO
+    IMAGE
+    VIDEO
+    MODEL_3D
 }
 
 type Media {
-  alt: String
-  mediaContentType: MediaContentType!
-  previewImage: Image
+    alt: String
+    mediaContentType: MediaContentType!
+    previewImage: Image
 }
 
 type MediaEdge {
-  cursor: String!
-  node: Media!
+    cursor: String!
+    node: Media!
 }
 
 type MediaConnection {
-  edges: [MediaEdge!]!
-  pageInfo: PageInfo!
+    edges: [MediaEdge!]!
+    pageInfo: PageInfo!
 }
 
 enum MetafieldValueType {
-  INTEGER
-  JSON_STRING
-  STRING
+    INTEGER
+    JSON_STRING
+    STRING
 }
 
 enum MetafieldOwnerType {
-  COLLECTION
-  CUSTOMER
-  ORDER
-  PAGE
-  PRODUCT
-  PRODUCTIMAGE
-  PRODUCTVARIANT
-  ARTICLE
+    COLLECTION
+    CUSTOMER
+    ORDER
+    PAGE
+    PRODUCT
+    PRODUCTIMAGE
+    PRODUCTVARIANT
+    ARTICLE
 }
 
 type Metafield {
-  id: ID!
-  key: String!
-  namespace: String!
-  createdAt: DateTime!
-  updatedAt: DateTime!
-  value: String!
-  valueType: MetafieldValueType!
-  ownerType: MetafieldOwnerType!
-  description: String
+    id: ID!
+    key: String!
+    namespace: String!
+    createdAt: DateTime!
+    updatedAt: DateTime!
+    value: String!
+    valueType: MetafieldValueType!
+    ownerType: MetafieldOwnerType!
+    description: String
 }
 
 type MetafieldEdge {
-  cursor: String!
-  node: Metafield!
+    cursor: String!
+    node: Metafield!
 }
 
 type MetafieldConnection {
-  edges: [MetafieldEdge!]!
-  pageInfo: PageInfo!
+    edges: [MetafieldEdge!]!
+    pageInfo: PageInfo!
 }
 
 enum CurrencyCode {
-  ZMW
-  AFN
-  ALL
-  AMD
-  ANG
-  AOA
-  ARS
-  AUD
-  AWG
-  AZN
-  BAM
-  BBD
-  BDT
-  BGN
-  BHD
-  BIF
-  BMD
-  BND
-  BOB
-  BRL
-  BSD
-  BTN
-  BWP
-  BYN
-  ZAR
-  AED
-  BZD
-  CAD
-  CDF
-  CHF
-  CLP
-  CNY
-  COP
-  CRC
-  CVE
-  CZK
-  DJF
-  DKK
-  DOP
-  DZD
-  EGP
-  ERN
-  ETB
-  EUR
-  FJD
-  FKP
-  GBP
-  GEL
-  GHS
-  GIP
-  GMD
-  GNF
-  GTQ
-  GYD
-  HKD
-  HNL
-  HRK
-  HTG
-  HUF
-  IDR
-  ILS
-  INR
-  IQD
-  IRR
-  ISK
-  JEP
-  JMD
-  JOD
-  JPY
-  KES
-  KGS
-  KHR
-  KID
-  KMF
-  KRW
-  KWD
-  KYD
-  KZT
-  LAK
-  LBP
-  LKR
-  LRD
-  LSL
-  LTL
-  LVL
-  LYD
-  MAD
-  MDL
-  MGA
-  MKD
-  MMK
-  MNT
-  MOP
-  MRU
-  MUR
-  MVR
-  MWK
-  MXN
-  MYR
-  MZN
-  NAD
-  NGN
-  NIO
-  NOK
-  NPR
-  NZD
-  OMR
-  PAB
-  PEN
-  PGK
-  PHP
-  PKR
-  PLN
-  PYG
-  QAR
-  RON
-  RSD
-  RUB
-  RWF
-  SAR
-  SBD
-  SCR
-  SDG
-  SEK
-  SGD
-  SHP
-  SLL
-  SOS
-  SRD
-  SSP
-  STD
-  SYP
-  SZL
-  THB
-  TJS
-  TMT
-  TND
-  TOP
-  TRY
-  TTD
-  TWD
-  TZS
-  UAH
-  UGX
-  USD
-  UYU
-  UZS
-  VES
-  VND
-  VUV
-  WST
-  XAF
-  XCD
-  XOF
-  XPF
-  YER
+    ZMW
+    AFN
+    ALL
+    AMD
+    ANG
+    AOA
+    ARS
+    AUD
+    AWG
+    AZN
+    BAM
+    BBD
+    BDT
+    BGN
+    BHD
+    BIF
+    BMD
+    BND
+    BOB
+    BRL
+    BSD
+    BTN
+    BWP
+    BYN
+    ZAR
+    AED
+    BZD
+    CAD
+    CDF
+    CHF
+    CLP
+    CNY
+    COP
+    CRC
+    CVE
+    CZK
+    DJF
+    DKK
+    DOP
+    DZD
+    EGP
+    ERN
+    ETB
+    EUR
+    FJD
+    FKP
+    GBP
+    GEL
+    GHS
+    GIP
+    GMD
+    GNF
+    GTQ
+    GYD
+    HKD
+    HNL
+    HRK
+    HTG
+    HUF
+    IDR
+    ILS
+    INR
+    IQD
+    IRR
+    ISK
+    JEP
+    JMD
+    JOD
+    JPY
+    KES
+    KGS
+    KHR
+    KID
+    KMF
+    KRW
+    KWD
+    KYD
+    KZT
+    LAK
+    LBP
+    LKR
+    LRD
+    LSL
+    LTL
+    LVL
+    LYD
+    MAD
+    MDL
+    MGA
+    MKD
+    MMK
+    MNT
+    MOP
+    MRU
+    MUR
+    MVR
+    MWK
+    MXN
+    MYR
+    MZN
+    NAD
+    NGN
+    NIO
+    NOK
+    NPR
+    NZD
+    OMR
+    PAB
+    PEN
+    PGK
+    PHP
+    PKR
+    PLN
+    PYG
+    QAR
+    RON
+    RSD
+    RUB
+    RWF
+    SAR
+    SBD
+    SCR
+    SDG
+    SEK
+    SGD
+    SHP
+    SLL
+    SOS
+    SRD
+    SSP
+    STD
+    SYP
+    SZL
+    THB
+    TJS
+    TMT
+    TND
+    TOP
+    TRY
+    TTD
+    TWD
+    TZS
+    UAH
+    UGX
+    USD
+    UYU
+    UZS
+    VES
+    VND
+    VUV
+    WST
+    XAF
+    XCD
+    XOF
+    XPF
+    YER
 }
 
 type Money {
-  amount: Float!
-  currencyCode: CurrencyCode!
+    amount: Decimal!
+    currencyCode: CurrencyCode!
 }
 
 type SEO {
-  description: String
-  title: String
+    description: String
+    title: String
 }
 
 type TagGroup {
-  id: ID!
-  title: String!
+    id: ID!
+    title: String!
 }
 
 type Tag {
-  id: ID!
-  group: TagGroup
-  value: String!
-  weight: Float!
+    id: ID!
+    group: TagGroup
+    value: String!
+    weight: Float!
 }
 
 type CountryHarmonizedSystemCode {
-  countryCode: CountryCode!
-  harmonizedSystemCode: String!
+    countryCode: CountryCode!
+    harmonizedSystemCode: String!
 }
 
 type CountryHarmonizedSystemCodeEdge {
-  cursor: String!
-  node: CountryHarmonizedSystemCode!
+    cursor: String!
+    node: CountryHarmonizedSystemCode!
 }
 
 type CountryHarmonizedSystemCodeConnection {
-  edges: [CountryHarmonizedSystemCodeEdge!]!
-  pageInfo: PageInfo!
+    edges: [CountryHarmonizedSystemCodeEdge!]!
+    pageInfo: PageInfo!
 }
 
 type EditableProperty {
-  locked: Boolean!
-  reason: FormattedString
+    locked: Boolean!
+    reason: FormattedString
 }
 
 type LocationAddress {
-  address1: String
-  address2: String
-  city: String
-  country: String
-  countryCode: String
-  formatted: [String!]!
-  latitude: Float
-  longitude: Float
-  phone: String
-  province: String
-  provinceCode: String
-  zip: String
+    address1: String
+    address2: String
+    city: String
+    country: String
+    countryCode: String
+    formatted: [String!]!
+    latitude: Float
+    longitude: Float
+    phone: String
+    province: String
+    provinceCode: String
+    zip: String
 }
 
 type Location {
-  activatable: Boolean!
-  address: LocationAddress!
-  addressVerified: Boolean!
-  deactivatable: Boolean!
-  deactivatedAt: DateTime
-  deletable: Boolean!
-  fulfillmentService: FulfillmentService
-  fulfillsOnlineOrders: Boolean!
-  hasActiveInventory: Boolean!
-  hasUnfulfilledOrders: Boolean!
-  id: ID!
-  inventoryLevel(inventoryItemId: ID!): InventoryLevel
-  inventoryLevels(
-    after: String
-    before: String
-    first: Int
-    last: Int
-    query: String
-    reverse: Boolean
-  ): InventoryLevelConnection!
-  isActive: Boolean!
-  name: String!
-  shipsInventory: Boolean!
-  suggestedAddresses: [LocationAddress!]!
+    activatable: Boolean!
+    address: LocationAddress!
+    addressVerified: Boolean!
+    deactivatable: Boolean!
+    deactivatedAt: DateTime
+    deletable: Boolean!
+    fulfillmentService: FulfillmentService
+    fulfillsOnlineOrders: Boolean!
+    hasActiveInventory: Boolean!
+    hasUnfulfilledOrders: Boolean!
+    id: ID!
+    inventoryLevel(inventoryItemId: ID!): InventoryLevel
+    inventoryLevels(
+        after: String
+        before: String
+        first: Int
+        last: Int
+        query: String
+        reverse: Boolean
+    ): InventoryLevelConnection!
+    isActive: Boolean!
+    name: String!
+    shipsInventory: Boolean!
+    suggestedAddresses: [LocationAddress!]!
 }
 
 input MetafieldInput {
-  Key: String!
+    Key: String!
 }
 
 input SEOInput {
-  id: ID!
+    id: ID!
 }
 
 input TagInput {
-  value: String!
+    value: String!
 }
 
 input ImageInput {
-  alt: String
+    alt: String
 }
 
 interface DisplayableError {
-  field: [String!]
-  message: String!
+    field: [String!]
+    message: String!
 }
 
 type MoneyBag {
-  presentmentMoney: Money # 展示价格
-  shopMoney: Money # 店铺价格
+    presentmentMoney: Money # 展示价格
+    shopMoney: Money # 店铺价格
 }

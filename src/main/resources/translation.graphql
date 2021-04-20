@@ -1,0 +1,47 @@
+#The purpose of a localization extension.
+enum LocalizationExtensionPurpose {
+    # Extensions that are used for shipping purposes, for example, customs clearance.
+    SHIPPING
+    # Extensions that are used for taxes purposes, for example, invoicing.
+    TAX
+}
+
+enum LocalizationExtensionKey {
+    # Extension key 'shipping_credential_br' for country BR.
+    SHIPPING_CREDENTIAL_BR
+    # Extension key 'shipping_credential_cn' for country CN.
+    SHIPPING_CREDENTIAL_CN
+    # Extension key 'shipping_credential_kr' for country KR.
+    SHIPPING_CREDENTIAL_KR
+    # Extension key 'tax_credential_br' for country BR.
+    TAX_CREDENTIAL_BR
+    # Extension key 'tax_credential_it' for country IT.
+    TAX_CREDENTIAL_IT
+    # Extension key 'tax_email_it' for country IT.
+    TAX_EMAIL_IT
+}
+
+type LocalizationExtension {
+    # Country ISO 3166-1 alpha-2 code.
+    countryCode: CountryCode!
+    # The localized extension keys that are allowed.
+    key: LocalizationExtensionKey!
+    # The purpose of this localization extension.
+    purpose: LocalizationExtensionPurpose!
+    # The localized extension title.
+    title: String!
+    # The value of the field.
+    value: String!
+}
+
+type LocalizationExtensionEdge {
+    cursor: String!
+    node: LocalizationExtension!
+}
+
+type LocalizationExtensionConnection {
+    totalCount: Int
+    edges: [LocalizationExtensionEdge!]!
+    pageInfo: PageInfo!
+}
+
