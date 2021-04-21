@@ -6,7 +6,7 @@
 
     <groupId>io.github.shop0</groupId>
     <artifactId>shop0-openapi-java</artifactId>
-    <version>1.0.1</version>
+    <version>1.0.2</version>
     <name>shop0-openapi-java</name>
     <description>api</description>
     <url>https://github.com/shop0/shop0-openapi-java</url>
@@ -447,6 +447,9 @@
                                 <goals>
                                     <goal>jar</goal>
                                 </goals>
+                                <configuration>
+                                    <additionalparam>-Xdoclint:none</additionalparam>
+                                </configuration>
                             </execution>
                         </executions>
                     </plugin>
