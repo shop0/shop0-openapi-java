@@ -512,6 +512,8 @@ type Order implements Node & HasEvents & HasMetafields {
     shippingAddress: MailingAddress
     # Line item that contains the shipping costs.
     shippingLine: ShippingLine
+    # The order's source infomation.
+    source: OrderSource
     # The sum of the quantities for the line items that contribute to the order's subtotal.
     subtotalLineItemsQuantity: Int!
     # Subtotal of the line items and their discounts (does not contain shipping costs and shipping discounts) in shop and presentment currencies.
@@ -572,6 +574,13 @@ type Order implements Node & HasEvents & HasMetafields {
     unpaid: Boolean!
     # Date and time when the order was last modified.
     updatedAt: DateTime!
+}
+
+type OrderSource {
+    # 订单来自合作方
+    partner: String
+    # 下单用户在合作方的用户ID
+    partnerUserId: String
 }
 
 enum OrderDisplayFulfillmentStatus{

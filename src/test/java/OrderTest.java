@@ -28,8 +28,9 @@ public class OrderTest {
     @Test
     public void testOrders() throws Exception {
         QueryResolver queryResolver = new QueryResolverImpl(shop0Client);
-        OrderConnectionTO orderConnection = queryResolver.orders(null, null, 10, 0, null, null, null, OrderSortKeysTO.UPDATED_AT);
+        OrderConnectionTO orderConnection = queryResolver.orders(null, null, 100, 0, null, null, null, OrderSortKeysTO.UPDATED_AT);
         System.out.println(orderConnection);
+        System.out.println("find size: " + orderConnection.getEdges().size());
     }
 
 }
