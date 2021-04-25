@@ -114,6 +114,21 @@ type Refund implements Node {
         last: Int
         reverse: Boolean
     ): OrderTransactionConnection!
+
+    # When the refund was created.
+    createdAt: DateTime
+    # A list of the order's refunded duties.
+    duties: [RefundDuty!]
+    # Note associated with the refund.
+    note: String
+    # The order associated with the refund.
+    order: Order!
+    # Why the order was refunded.
+    reason: String
+    # Total amount refunded across all the transactions for this refund in shop and presentment currencies.
+    totalRefundedSet: MoneyBag!
+    # When the refund was last updated.
+    updatedAt: DateTime!
 }
 
 type OrderTransactionConnection {
