@@ -60,6 +60,7 @@ public class QueryResolverImpl implements QueryResolver {
                                         )
                                         .variantTitle()
                                         .vendor()
+                                        .vendorSku()
                                 )
                         )
 
@@ -111,6 +112,7 @@ public class QueryResolverImpl implements QueryResolver {
                                                         )
                                                         .variantTitle()
                                                         .vendor()
+                                                        .vendorSku()
                                                 )
                                         )
                                 )
@@ -162,6 +164,7 @@ public class QueryResolverImpl implements QueryResolver {
                                                         )
                                                         .variantTitle()
                                                         .vendor()
+                                                        .vendorSku()
                                                 )
                                                 .priceSet(new MoneyBagResponseProjection()
                                                         .presentmentMoney(new MoneyResponseProjection().all$())

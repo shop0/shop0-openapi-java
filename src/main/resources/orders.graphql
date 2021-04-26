@@ -258,6 +258,8 @@ type LineItem implements Node {
     variantTitle: String
     # Name of the vendor who made the variant.
     vendor: String
+    # Variant SKU number of the vendor.
+    vendorSku: String
 }
 
 type LineItemEdge {

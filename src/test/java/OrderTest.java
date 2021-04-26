@@ -21,7 +21,7 @@ public class OrderTest {
     @Test
     public void testOrder() throws Exception {
         QueryResolver queryResolver = new QueryResolverImpl(shop0Client);
-        OrderTO order = queryResolver.order("4193331d-f6d3-4b3c-a03e-3800ca834d65");
+        OrderTO order = queryResolver.order("2e609ec0-2af5-4b69-bc1e-7686a1400cbc");
         System.out.println(order);
     }
 
