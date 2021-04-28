@@ -59,6 +59,11 @@ public class Shop0Client {
             return this;
         }
 
+        public Builder skipSSL(boolean v) {
+            configuration.skipSSL = v;
+            return this;
+        }
+
         public Shop0Client build() {
             if (configuration.host == null) {
                 configuration.host = "http://localhost:8080/graphql";
@@ -81,38 +86,45 @@ public class Shop0Client {
                         builder.addInterceptor(loggingInterceptor);
                     }
 
-                    try {
-                        final TrustManager[] trustAllCerts = new TrustManager[]{
-                                new X509TrustManager() {
-                                    @Override
-                                    public void checkClientTrusted(java.security.cert.X509Certificate[] chain, String authType) {
-                                    }
-
-                                    @Override
-                                    public void checkServerTrusted(java.security.cert.X509Certificate[] chain, String authType) {
-                                    }
-
-                                    @Override
-                                    public java.security.cert.X509Certificate[] getAcceptedIssuers() {
-                                        return new java.security.cert.X509Certificate[]{};
-                                    }
-                                }
-                        };
-
-                        final SSLContext sslContext = SSLContext.getInstance("SSL");
-                        sslContext.init(null, trustAllCerts, new java.security.SecureRandom());
-                        final javax.net.ssl.SSLSocketFactory sslSocketFactory = sslContext.getSocketFactory();
-                        builder.sslSocketFactory(sslSocketFactory);
-
-                        builder.hostnameVerifier(new HostnameVerifier() {
-                            @Override
-                            public boolean verify(String hostname, SSLSession session) {
-                                return true;
-                            }
-                        });
+                    // 是否跳过 ssl检测
+                    if(!configuration.skipSSL){
                         httpClient = builder.build();
-                    } catch (Exception e) {
-                        throw new RuntimeException(e);
+                    }else {
+                        // 跳过 ssl检测
+                        try {
+                            final TrustManager[] trustAllCerts = new TrustManager[]{
+                                    new X509TrustManager() {
+                                        @Override
+                                        public void checkClientTrusted(java.security.cert.X509Certificate[] chain, String authType) {
+                                        }
+
+                                        @Override
+                                        public void checkServerTrusted(java.security.cert.X509Certificate[] chain, String authType) {
+                                        }
+
+                                        @Override
+                                        public java.security.cert.X509Certificate[] getAcceptedIssuers() {
+                                            return new java.security.cert.X509Certificate[]{};
+                                        }
+                                    }
+                            };
+
+                            final SSLContext sslContext = SSLContext.getInstance("SSL");
+                            sslContext.init(null, trustAllCerts, new java.security.SecureRandom());
+                            final javax.net.ssl.SSLSocketFactory sslSocketFactory = sslContext.getSocketFactory();
+                            builder.sslSocketFactory(sslSocketFactory);
+
+                            builder.hostnameVerifier(new HostnameVerifier() {
+                                @Override
+                                public boolean verify(String hostname, SSLSession session) {
+                                    return true;
+                                }
+                            });
+
+                            httpClient = builder.build();
+                        } catch (Exception e) {
+                            throw new RuntimeException(e);
+                        }
                     }
                 }
             }

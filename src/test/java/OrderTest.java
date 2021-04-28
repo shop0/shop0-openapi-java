@@ -15,6 +15,7 @@ public class OrderTest {
                 host("https://api.xshop.lucfish.com/admin/v1/graphql").
                 debug(true).
                 accessToken("").
+                skipSSL(true).
                 build();
     }
 
