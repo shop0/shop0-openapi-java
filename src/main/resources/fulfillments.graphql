@@ -1,3 +1,7 @@
+extend type Mutation {
+    fulfillmentCreate(input: FulfillmentV2Input!, message: String): FulfillmentCreate!
+}
+
 enum FulfillmentDisplayStatus {
     SUBMITTED
     CANCELED
@@ -32,6 +36,38 @@ enum FulfillmentStatus {
     SUCCESS
 }
 
+input FulfillmentOrderLineItemInput {
+    # The ID of the fulfillment order line item.
+    id: Int
+    # The quantity of the fulfillment order line item.
+    quantity: Int
+}
+
+input FulfillmentOrderLineItemsInput {
+    # The ID of the fulfillment order.
+    fulfillmentOrderId: ID!
+    # The fulfillment order line items to be fulfilled. If left blank, all line items of the fulfillment order will be fulfilled.
+    fulfillmentOrderLineItems: [FulfillmentOrderLineItemInput!]
+}
+
+input FulfillmentV2Input {
+    # Pairs of fulfillment_order_id and fulfillment_order_line_items that represent the fulfillment order line items that have to be fulfilled for each fulfillment order. For any given pair, if the fulfillment order line items are left blank then all the fulfillment order line items of the associated fulfillment order ID will be fulfilled.
+    lineItemsByFulfillmentOrder: [FulfillmentOrderLineItemsInput!]!
+    # Whether the customer is notified. If set to true, a notification is sent when the fulfillment is created.
+    notifyCustomer: Boolean
+    # The fulfillment's tracking information, including a tracking URL, a tracking number, and the company associated with the fulfillment.
+    trackingInfo: FulfillmentTrackingInput
+}
+
+input FulfillmentTrackingInput {
+    # The name of the tracking company.
+    company: String
+    # The tracking number of the fulfillment.
+    number: String
+    # The URL to track the fulfillment.
+    url: URL
+}
+
 type FulfillmentTrackingInfo {
     # The name of the tracking company.
     company: String
@@ -39,6 +75,13 @@ type FulfillmentTrackingInfo {
     number: String
     # The URLs to track the fulfillment.
     url: URL
+}
+
+type FulfillmentCreate {
+    # 创建的履约
+    fulfillment: Fulfillment
+    # 执行过程中产生的错误列表
+    userErrors: [UserError!]!
 }
 
 type ShippingMethod {

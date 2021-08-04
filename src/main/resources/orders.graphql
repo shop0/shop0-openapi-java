@@ -14,7 +14,137 @@ extend type Query {
 
 extend type Mutation {
     orderClose(input: OrderCloseInput!): OrderClose!
+    orderUpdate(input: OrderInput!): OrderUpdate!
     refundCreate(input: RefundInput!): RefundCreate!
+    refundSessionReject(id: ID!, reason: RefundSessionRejectionReasonInput!): RefundSessionReject!
+    refundSessionResolve(id: ID!): RefundSessionResolve!
+}
+
+type RefundSessionResolve {
+    # 更新的退款会话。
+    returnSession: RefundSession
+    # 执行突变时发生的错误列表。
+    userErrors: [RefundSessionResolveUserError!]!
+}
+
+type RefundSessionResolveUserError {
+    # The error code.
+    code: RefundSessionResolveUserErrorCode
+    # The path to the input field that caused the error.
+    field: [String!]
+    # The error message.
+    message: String!
+}
+
+enum RefundSessionResolveUserErrorCode {
+    REFUND_SESSION_INVALID_STATE
+    # Refund session has already been rejected.
+
+    REFUND_SESSION_NOT_FOUND
+    # Refund session not found.
+}
+
+enum RefundSessionStatusReasonRejectionCode {
+    # Refund processing failure.
+    PROCESSING_ERROR
+}
+
+input RefundSessionRejectionReasonInput {
+    # The reason code.
+    code: RefundSessionStatusReasonRejectionCode!
+    # A custom, localized message for the merchant.
+    merchantMessage: String
+}
+
+type RefundSessionReject {
+    returnSession: RefundSession
+    userErrors: [RefundSessionRejectUserError!]!
+}
+
+type RefundSession {
+    id: ID!,
+    status: RefundSessionStatus!
+}
+
+type RefundSessionStatus {
+    # The refund status code.
+    code: RefundSessionStatusCode!
+    # The refund status reason (if applicable).
+    reason: RefundSessionStatusReason
+}
+
+type RefundSessionStatusCode {
+    # The reason code.
+    code: RefundSessionStatusReasonRejectionCode!
+    # A custom, localized message for the merchant.
+    merchantMessage: String
+}
+
+type RefundSessionStatusReason {
+    code: RefundSessionStatusReasonRejectionCode!
+    merchantMessage: String
+}
+
+type RefundSessionRejectUserError {
+    # The error code.
+    code: RefundSessionRejectUserErrorCode
+    # The path to the input field that caused the error.
+    field: [String!]
+    # The error message.
+    message: String!
+}
+
+enum RefundSessionRejectUserErrorCode {
+    REFUND_SESSION_INVALID_STATE
+    # Refund session has already been resolved.
+
+    REFUND_SESSION_NOT_FOUND
+    # Refund session not found.
+}
+
+input OrderInput {
+    # 要添加到订单中的自定义信息，以键值对的形式表示。也称为音符属性
+    customAttributes: [AttributeInput!]
+    email: String
+    id: ID!
+    localizationExtensions: [LocalizationExtensionInput!]
+    metafields: [MetafieldInput!]
+    note: String
+    shippingAddress: MailingAddressInput
+    tags: [String!]
+}
+
+input AttributeInput {
+    key: String!
+    value: String!
+}
+
+input LocalizationExtensionInput {
+    # The key for the localization extension.
+    key: LocalizationExtensionKey!
+    # The localization extension value.
+    value: String
+}
+
+input MailingAddressInput {
+        address1: String
+        address2: String
+        city: String
+        company: String
+        country: String
+        countryCode: CountryCode
+        firstName: String
+        id: ID!
+        lastName: String
+        phone: String
+        province: String
+        provinceCode: String
+        zip: String
+}
+
+type OrderUpdate {
+    order: Order
+    userErrors: [UserError!]!
 }
 
 input RefundInput {
@@ -45,6 +175,26 @@ input RefundLineItemInput {
     locationId: ID
     quantity: Int!
     restockType: RefundLineItemRestockType
+}
+
+enum LocalizationExtensionKey {
+    SHIPPING_CREDENTIAL_BR
+    # Extension key 'shipping_credential_br' for country BR.
+
+    SHIPPING_CREDENTIAL_CN
+    # Extension key 'shipping_credential_cn' for country CN.
+
+    SHIPPING_CREDENTIAL_KR
+    # Extension key 'shipping_credential_kr' for country KR.
+
+    TAX_CREDENTIAL_BR
+    # Extension key 'tax_credential_br' for country BR.
+
+    TAX_CREDENTIAL_IT
+    # Extension key 'tax_credential_it' for country IT.
+
+    TAX_EMAIL_IT
+    # Extension key 'tax_email_it' for country IT.
 }
 
 enum RefundDutyRefundType {
