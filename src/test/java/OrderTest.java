@@ -1,9 +1,9 @@
+import io.github.shop0.openapi.graphql.MutationResolverImpl;
 import io.github.shop0.openapi.graphql.QueryResolverImpl;
 import io.github.shop0.openapi.graphql.Shop0Client;
+import io.github.shop0.openapi.graphql.api.MutationResolver;
 import io.github.shop0.openapi.graphql.api.QueryResolver;
-import io.github.shop0.openapi.graphql.model.OrderConnectionTO;
-import io.github.shop0.openapi.graphql.model.OrderSortKeysTO;
-import io.github.shop0.openapi.graphql.model.OrderTO;
+import io.github.shop0.openapi.graphql.model.*;
 import org.junit.jupiter.api.Test;
 
 public class OrderTest {
@@ -32,6 +32,28 @@ public class OrderTest {
         OrderConnectionTO orderConnection = queryResolver.orders(null, null, 100, 0, null, null, null, OrderSortKeysTO.UPDATED_AT);
         System.out.println(orderConnection);
         System.out.println("find size: " + orderConnection.getEdges().size());
+    }
+
+    // 关闭订单
+    @Test
+    public void orderClose() throws Exception {
+        MutationResolver mutationResolver = new MutationResolverImpl(shop0Client);
+        OrderCloseInputTO input = new OrderCloseInputTO();
+        input.setId("");
+
+        OrderCloseTO order = mutationResolver.orderClose(input);
+        System.out.println(order);
+    }
+
+    // 创建退款单
+    @Test
+    public void refundCreate() throws Exception {
+        MutationResolver mutationResolver = new MutationResolverImpl(shop0Client);
+        RefundInputTO input = new RefundInputTO();
+        input.setOrderId("");
+
+        RefundCreateTO order = mutationResolver.refundCreate(input);
+        System.out.println(order);
     }
 
 }
