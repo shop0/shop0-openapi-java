@@ -11,11 +11,19 @@ import java.util.List;
 
 public class OrderTest {
     private Shop0Client shop0Client;
+    String host = "https://api.xshop.lucfish.com/admin/v1/graphql";
+    String orderId = "EC2021080619553600000097";
+    String itemId = "54580828213251";
+    String refundSessionId = "202108061750269462484";
+
+    {
+        host = "http://localhost:3000/graphql";
+    }
 
     @org.junit.jupiter.api.BeforeEach
     public void setup() {
         shop0Client = new Shop0Client.Builder().
-                host("https://api.xshop.lucfish.com/admin/v1/graphql").
+                host(host).
                 debug(true).
                 accessToken("").
                 skipSSL(true).
@@ -25,7 +33,7 @@ public class OrderTest {
     @Test
     public void testOrder() throws Exception {
         QueryResolver queryResolver = new QueryResolverImpl(shop0Client);
-        OrderTO order = queryResolver.order("2e609ec0-2af5-4b69-bc1e-7686a1400cbc");
+        OrderTO order = queryResolver.order(orderId);
         System.out.println(order);
     }
 
@@ -40,7 +48,6 @@ public class OrderTest {
     // 关闭订单
     @Test
     public void orderClose() throws Exception {
-        String orderId = "";
 
         MutationResolver mutationResolver = new MutationResolverImpl(shop0Client);
         OrderCloseInputTO input = new OrderCloseInputTO();
@@ -53,12 +60,19 @@ public class OrderTest {
     // 更新订单
     @Test
     public void orderUpdate() throws Exception {
-        String orderId = "";
 
         MutationResolver mutationResolver = new MutationResolverImpl(shop0Client);
         OrderInputTO input = new OrderInputTO();
+        MailingAddressInputTO shippingAddress = new MailingAddressInputTO();
+        shippingAddress.setAddress1("湖北");
+        shippingAddress.setAddress2("光谷广场");
+        shippingAddress.setCity("武汉");
+        shippingAddress.setId("54575883653121");
+        shippingAddress.setProvince("湖北");
+        shippingAddress.setPhone("11111111111");
+
         input.setId(orderId);
-        input.setNote("第1次更新");
+        input.setShippingAddress(shippingAddress);
 
         OrderUpdateTO order = mutationResolver.orderUpdate(input);
         System.out.println(order);
@@ -67,11 +81,11 @@ public class OrderTest {
     // 创建退款单
     @Test
     public void refundCreate() throws Exception {
-        String orderId = "";
 
         MutationResolver mutationResolver = new MutationResolverImpl(shop0Client);
         RefundInputTO input = new RefundInputTO();
         input.setOrderId(orderId);
+        input.setNote("不要了");
 
         RefundCreateTO order = mutationResolver.refundCreate(input);
         System.out.println(order);
@@ -80,7 +94,6 @@ public class OrderTest {
     // 拒绝退款
     @Test
     public void refundSessionReject() throws Exception {
-        String refundSessionId = "";
 
         MutationResolver mutationResolver = new MutationResolverImpl(shop0Client);
         RefundSessionRejectionReasonInputTO input = new RefundSessionRejectionReasonInputTO();
@@ -94,7 +107,6 @@ public class OrderTest {
     // 同意退款
     @Test
     public void refundSessionResolve() throws Exception {
-        String refundSessionId = "";
 
         MutationResolver mutationResolver = new MutationResolverImpl(shop0Client);
 
@@ -105,16 +117,31 @@ public class OrderTest {
     // 创建物流单
     @Test
     public void fulfillmentCreate() throws Exception {
-        String orderId = "";
 
         MutationResolver mutationResolver = new MutationResolverImpl(shop0Client);
-        FulfillmentV2InputTO input = new FulfillmentV2InputTO();
-        FulfillmentOrderLineItemsInputTO fulfillmentOrderLineItemsInputTO = new FulfillmentOrderLineItemsInputTO();
-        List<FulfillmentOrderLineItemsInputTO> items = new ArrayList<>();
 
+
+        FulfillmentOrderLineItemInputTO fulfillmentOrderLineItemInputTO = new FulfillmentOrderLineItemInputTO();
+        fulfillmentOrderLineItemInputTO.setId(itemId);
+        fulfillmentOrderLineItemInputTO.setQuantity(1);
+
+        List<FulfillmentOrderLineItemInputTO> fulfillmentOrderLineItems = new ArrayList<>();
+        fulfillmentOrderLineItems.add(fulfillmentOrderLineItemInputTO);
+
+        FulfillmentOrderLineItemsInputTO fulfillmentOrderLineItemsInputTO = new FulfillmentOrderLineItemsInputTO();
         fulfillmentOrderLineItemsInputTO.setFulfillmentOrderId(orderId);
+        fulfillmentOrderLineItemsInputTO.setFulfillmentOrderLineItems(fulfillmentOrderLineItems);
+
+        List<FulfillmentOrderLineItemsInputTO> items = new ArrayList<>();
         items.add(fulfillmentOrderLineItemsInputTO);
+
+        FulfillmentV2InputTO input = new FulfillmentV2InputTO();
         input.setLineItemsByFulfillmentOrder(items);
+
+        FulfillmentTrackingInputTO fulfillmentTrackingInputTO = new FulfillmentTrackingInputTO();
+        fulfillmentTrackingInputTO.setCompany("顺丰");
+        fulfillmentTrackingInputTO.setNumber("111111111");
+        input.setTrackingInfo(fulfillmentTrackingInputTO);
 
         FulfillmentCreateTO order = mutationResolver.fulfillmentCreate(input, "测试");
         System.out.println(order);

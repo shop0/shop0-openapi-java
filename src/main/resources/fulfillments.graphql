@@ -38,7 +38,7 @@ enum FulfillmentStatus {
 
 input FulfillmentOrderLineItemInput {
     # The ID of the fulfillment order line item.
-    id: Int
+    id: String
     # The quantity of the fulfillment order line item.
     quantity: Int
 }
