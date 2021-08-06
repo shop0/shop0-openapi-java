@@ -12,8 +12,8 @@ import java.util.List;
 public class OrderTest {
     private Shop0Client shop0Client;
     String host = "https://api.xshop.lucfish.com/admin/v1/graphql";
-    String orderId = "EC2021080619553600000097";
-    String itemId = "54580828213251";
+    String orderId = "EC2021080619463000000098";
+    String itemId = "54580685082627";
     String refundSessionId = "202108061750269462484";
 
     {
@@ -83,9 +83,18 @@ public class OrderTest {
     public void refundCreate() throws Exception {
 
         MutationResolver mutationResolver = new MutationResolverImpl(shop0Client);
+
+        RefundLineItemInputTO refundLineItemInputTO = new RefundLineItemInputTO();
+        refundLineItemInputTO.setLineItemId(itemId);
+        refundLineItemInputTO.setQuantity(1);
+
+        java.util.List<RefundLineItemInputTO> refundLineItems = new ArrayList<>();
+        refundLineItems.add(refundLineItemInputTO);
+
         RefundInputTO input = new RefundInputTO();
         input.setOrderId(orderId);
         input.setNote("不要了");
+        input.setRefundLineItems(refundLineItems);
 
         RefundCreateTO order = mutationResolver.refundCreate(input);
         System.out.println(order);
@@ -120,7 +129,6 @@ public class OrderTest {
 
         MutationResolver mutationResolver = new MutationResolverImpl(shop0Client);
 
-
         FulfillmentOrderLineItemInputTO fulfillmentOrderLineItemInputTO = new FulfillmentOrderLineItemInputTO();
         fulfillmentOrderLineItemInputTO.setId(itemId);
         fulfillmentOrderLineItemInputTO.setQuantity(1);
@@ -135,12 +143,12 @@ public class OrderTest {
         List<FulfillmentOrderLineItemsInputTO> items = new ArrayList<>();
         items.add(fulfillmentOrderLineItemsInputTO);
 
-        FulfillmentV2InputTO input = new FulfillmentV2InputTO();
-        input.setLineItemsByFulfillmentOrder(items);
-
         FulfillmentTrackingInputTO fulfillmentTrackingInputTO = new FulfillmentTrackingInputTO();
         fulfillmentTrackingInputTO.setCompany("顺丰");
         fulfillmentTrackingInputTO.setNumber("111111111");
+
+        FulfillmentV2InputTO input = new FulfillmentV2InputTO();
+        input.setLineItemsByFulfillmentOrder(items);
         input.setTrackingInfo(fulfillmentTrackingInputTO);
 
         FulfillmentCreateTO order = mutationResolver.fulfillmentCreate(input, "测试");
