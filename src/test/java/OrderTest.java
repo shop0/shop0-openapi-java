@@ -30,6 +30,7 @@ public class OrderTest {
                 build();
     }
 
+    // 获取订单详情
     @Test
     public void testOrder() throws Exception {
         QueryResolver queryResolver = new QueryResolverImpl(shop0Client);
@@ -37,6 +38,7 @@ public class OrderTest {
         System.out.println(order);
     }
 
+    // page 查询 order
     @Test
     public void testOrders() throws Exception {
         QueryResolver queryResolver = new QueryResolverImpl(shop0Client);
